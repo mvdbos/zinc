@@ -19,5 +19,5 @@ members = [
 ]
 
 exclude = [
-    "zksync"
+    "zksync-dev"
 ]

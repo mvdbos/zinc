@@ -29,7 +29,11 @@ Inflector = "0.11"
 tokio = "0.2"
 reqwest = "0.10"
 
-zksync = { path = "../zksync/core/sdk" }
+zksync = { path = "../zksync-dev/sdk/zksync-rs" }
+zksync_types = { path = "../zksync-dev/core/lib/types" }
+zksync_utils = { path = "../zksync-dev/core/lib/utils" }
+zksync_eth_signer = { path = "../zksync-dev/core/lib/eth_signer" }
+
 num_old = { package = "num", version = "0.2.1" }
 
 zinc-logger = { path = "../zinc-logger" }

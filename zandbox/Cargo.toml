@@ -34,7 +34,11 @@ actix-cors = "0.4"
 actix-web = "3.1"
 sqlx = { version = "0.4.0-beta.1", default-features = false, features = [ "runtime-async-std", "macros", "postgres", "json" ] }
 
-zksync = { path = "../zksync/core/sdk" }
+zksync = { path = "../zksync-dev/sdk/zksync-rs" }
+zksync_types = { path = "../zksync-dev/core/lib/types" }
+zksync_utils = { path = "../zksync-dev/core/lib/utils" }
+zksync_eth_signer = { path = "../zksync-dev/core/lib/eth_signer" }
+
 num_old = { package = "num", version = "0.2.1" }
 
 zinc-logger = { path = "../zinc-logger" }
