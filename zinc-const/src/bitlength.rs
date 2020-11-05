@@ -23,6 +23,9 @@ pub const FIELD_PADDED: usize = FIELD + (BYTE - FIELD % BYTE);
 /// The `sha256` hash bitlength.
 pub const SHA256_HASH: usize = crate::size::SHA256_HASH * BYTE;
 
+/// The `sha256` hash bitlength.
+pub const BLAKE2S_HASH: usize = crate::size::BLAKE2S_HASH * BYTE;
+
 /// The zkSync token ID bitlength.
 pub const TOKEN_ID: usize = BYTE * 2;
 

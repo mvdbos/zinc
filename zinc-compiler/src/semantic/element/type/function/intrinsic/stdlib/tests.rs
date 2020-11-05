@@ -28,6 +28,7 @@ use crate::semantic::element::r#type::function::intrinsic::stdlib::convert_to_bi
 use crate::semantic::element::r#type::function::intrinsic::stdlib::crypto_pedersen::Function as CryptoPedersenFunction;
 use crate::semantic::element::r#type::function::intrinsic::stdlib::crypto_schnorr_signature_verify::Function as CryptoSchnorrSignatureVerifyFunction;
 use crate::semantic::element::r#type::function::intrinsic::stdlib::crypto_sha256::Function as CryptoSha256Function;
+use crate::semantic::element::r#type::function::intrinsic::stdlib::crypto_blake2s::Function as CryptoBlake2sFunction;
 use crate::semantic::element::r#type::function::intrinsic::stdlib::error::Error as StandardLibraryFunctionError;
 use crate::semantic::element::r#type::function::intrinsic::stdlib::ff_invert::Function as FfInvertFunction;
 use crate::semantic::element::r#type::Type;
@@ -328,6 +329,124 @@ fn main() {
                 zinc_const::limit::PEDERSEN_HASH_INPUT_BITS + 1,
             )
             .to_string(),
+        }),
+    ))));
+
+    let result = crate::semantic::tests::compile_entry(input);
+
+    assert_eq!(result, expected);
+}
+
+#[test]
+fn error_crypto_blake2s_argument_count_lesser() {
+    let input = r#"
+fn main() {
+    std::crypto::blake2s();
+}
+"#;
+
+    let expected = Err(Error::Semantic(SemanticError::Element(ElementError::Type(
+        TypeError::Function(FunctionError::ArgumentCount {
+            location: Location::test(3, 5),
+            function: CryptoBlake2sFunction::IDENTIFIER.to_owned(),
+            expected: CryptoBlake2sFunction::ARGUMENT_COUNT,
+            found: CryptoBlake2sFunction::ARGUMENT_COUNT - 1,
+            reference: None,
+        }),
+    ))));
+
+    let result = crate::semantic::tests::compile_entry(input);
+
+    assert_eq!(result, expected);
+}
+
+#[test]
+fn error_crypto_blake2s_argument_count_greater() {
+    let input = r#"
+fn main() {
+    std::crypto::blake2s([true; 8], 42);
+}
+"#;
+
+    let expected = Err(Error::Semantic(SemanticError::Element(ElementError::Type(
+        TypeError::Function(FunctionError::ArgumentCount {
+            location: Location::test(3, 5),
+            function: CryptoBlake2sFunction::IDENTIFIER.to_owned(),
+            expected: CryptoBlake2sFunction::ARGUMENT_COUNT,
+            found: CryptoBlake2sFunction::ARGUMENT_COUNT + 1,
+            reference: None,
+        }),
+    ))));
+
+    let result = crate::semantic::tests::compile_entry(input);
+
+    assert_eq!(result, expected);
+}
+
+#[test]
+fn error_crypto_blake2s_argument_1_preimage_expected_bit_array() {
+    let input = r#"
+fn main() {
+    std::crypto::blake2s(42);
+}
+"#;
+
+    let expected = Err(Error::Semantic(SemanticError::Element(ElementError::Type(
+        TypeError::Function(FunctionError::ArgumentType {
+            location: Location::test(3, 26),
+            function: CryptoBlake2sFunction::IDENTIFIER.to_owned(),
+            name: "preimage".to_owned(),
+            position: CryptoBlake2sFunction::ARGUMENT_INDEX_PREIMAGE + 1,
+            expected: format!("[bool; N], N > 0, N % {} == 0", zinc_const::bitlength::BYTE),
+            found: Type::integer_unsigned(None, zinc_const::bitlength::BYTE).to_string(),
+        }),
+    ))));
+
+    let result = crate::semantic::tests::compile_entry(input);
+
+    assert_eq!(result, expected);
+}
+
+#[test]
+fn error_crypto_blake2s_argument_1_preimage_expected_bit_array_not_empty() {
+    let input = r#"
+fn main() {
+    std::crypto::blake2s([true; 0]);
+}
+"#;
+
+    let expected = Err(Error::Semantic(SemanticError::Element(ElementError::Type(
+        TypeError::Function(FunctionError::ArgumentType {
+            location: Location::test(3, 26),
+            function: CryptoBlake2sFunction::IDENTIFIER.to_owned(),
+            name: "preimage".to_owned(),
+            position: CryptoBlake2sFunction::ARGUMENT_INDEX_PREIMAGE + 1,
+            expected: format!("[bool; N], N > 0, N % {} == 0", zinc_const::bitlength::BYTE),
+            found: Type::array(Some(Location::test(3, 26)), Type::boolean(None), 0).to_string(),
+        }),
+    ))));
+
+    let result = crate::semantic::tests::compile_entry(input);
+
+    assert_eq!(result, expected);
+}
+
+#[test]
+fn error_crypto_blake2s_argument_1_preimage_expected_bit_array_size_multiple_8() {
+    let input = r#"
+fn main() {
+    std::crypto::blake2s([true; 4]);
+}
+"#;
+
+    let expected = Err(Error::Semantic(SemanticError::Element(ElementError::Type(
+        TypeError::Function(FunctionError::ArgumentType {
+            location: Location::test(3, 26),
+            function: CryptoBlake2sFunction::IDENTIFIER.to_owned(),
+            name: "preimage".to_owned(),
+            position: CryptoBlake2sFunction::ARGUMENT_INDEX_PREIMAGE + 1,
+            expected: format!("[bool; N], N > 0, N % {} == 0", zinc_const::bitlength::BYTE),
+            found: Type::array(Some(Location::test(3, 26)), Type::boolean(None), 4).to_string(),
         }),
     ))));
 

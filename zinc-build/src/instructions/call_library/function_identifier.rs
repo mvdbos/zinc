@@ -14,6 +14,8 @@ pub enum LibraryFunctionIdentifier {
     CryptoSha256,
     /// The `std::crypto::pedersen` function identifier.
     CryptoPedersen,
+    /// The `std::crypto::blake2s` function identifier.
+    CryptoBlake2s,
     /// The `std::crypto::schnorr::Signature::verify` function identifier.
     CryptoSchnorrSignatureVerify,
 

@@ -32,6 +32,7 @@ use self::convert::from_bits_field::FromBitsField as ConvertFromBitsField;
 use self::convert::from_bits_signed::FromBitsSigned as ConvertFromBitsSigned;
 use self::convert::from_bits_unsigned::FromBitsUnsigned as ConvertFromBitsUnsigned;
 use self::convert::to_bits::ToBits as ConvertToBits;
+use self::crypto::blake2s::Blake2s as CryptoBlake2s;
 use self::crypto::pedersen::Pedersen as CryptoPedersen;
 use self::crypto::schnorr_verify::SchnorrSignatureVerify as CryptoSchnorrSignatureVerify;
 use self::crypto::sha256::Sha256 as CryptoSha256;
@@ -55,6 +56,9 @@ impl<VM: IVirtualMachine> IExecutable<VM> for CallLibrary {
             }
             LibraryFunctionIdentifier::CryptoPedersen => {
                 vm.call_native(CryptoPedersen::new(self.input_size)?)
+            }
+            LibraryFunctionIdentifier::CryptoBlake2s => {
+                vm.call_native(CryptoBlake2s::new(self.input_size)?)
             }
             LibraryFunctionIdentifier::CryptoSchnorrSignatureVerify => {
                 vm.call_native(CryptoSchnorrSignatureVerify::new(self.input_size)?)
