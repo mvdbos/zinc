@@ -4192,7 +4192,7 @@ dependencies = [
 
 [[package]]
 name = "zandbox"
-version = "0.2.0"
+version = "0.2.0-ING-1"
 dependencies = [
  "actix-cors",
  "actix-rt",
@@ -4225,7 +4225,7 @@ dependencies = [
 
 [[package]]
 name = "zargo"
-version = "0.2.0"
+version = "0.2.0-ING-1"
 dependencies = [
  "Inflector",
  "anyhow",
@@ -4260,7 +4260,7 @@ checksum = "05f33972566adbd2d3588b0491eb94b98b43695c4ef897903470ede4f3f5a28a"
 
 [[package]]
 name = "zinc-build"
-version = "0.2.0"
+version = "0.2.0-ING-1"
 dependencies = [
  "bincode",
  "failure",
@@ -4274,7 +4274,7 @@ dependencies = [
 
 [[package]]
 name = "zinc-compiler"
-version = "0.2.0"
+version = "0.2.0-ING-1"
 dependencies = [
  "colored",
  "lazy_static",
@@ -4296,11 +4296,11 @@ dependencies = [
 
 [[package]]
 name = "zinc-const"
-version = "0.2.0"
+version = "0.2.0-ING-1"
 
 [[package]]
 name = "zinc-lexical"
-version = "0.2.0"
+version = "0.2.0-ING-1"
 dependencies = [
  "lazy_static",
  "log",
@@ -4310,7 +4310,7 @@ dependencies = [
 
 [[package]]
 name = "zinc-logger"
-version = "0.2.0"
+version = "0.2.0-ING-1"
 dependencies = [
  "colored",
  "env_logger",
@@ -4320,7 +4320,7 @@ dependencies = [
 
 [[package]]
 name = "zinc-manifest"
-version = "0.2.0"
+version = "0.2.0-ING-1"
 dependencies = [
  "failure",
  "serde",
@@ -4332,7 +4332,7 @@ dependencies = [
 
 [[package]]
 name = "zinc-math"
-version = "0.2.0"
+version = "0.2.0-ING-1"
 dependencies = [
  "failure",
  "num 0.3.0",
@@ -4341,7 +4341,7 @@ dependencies = [
 
 [[package]]
 name = "zinc-source"
-version = "0.2.0"
+version = "0.2.0-ING-1"
 dependencies = [
  "serde",
  "zinc-const",
@@ -4349,7 +4349,7 @@ dependencies = [
 
 [[package]]
 name = "zinc-syntax"
-version = "0.2.0"
+version = "0.2.0-ING-1"
 dependencies = [
  "log",
  "zinc-const",
@@ -4358,7 +4358,7 @@ dependencies = [
 
 [[package]]
 name = "zinc-tester"
-version = "0.2.0"
+version = "0.2.0-ING-1"
 dependencies = [
  "colored",
  "failure",
@@ -4376,7 +4376,7 @@ dependencies = [
 
 [[package]]
 name = "zinc-vm"
-version = "0.2.0"
+version = "0.2.0-ING-1"
 dependencies = [
  "colored",
  "failure",
@@ -4398,7 +4398,7 @@ dependencies = [
 
 [[package]]
 name = "zinc-zksync"
-version = "0.2.0"
+version = "0.2.0-ING-1"
 dependencies = [
  "failure",
  "num 0.2.1",
