@@ -154,6 +154,7 @@ impl IntrinsicScope {
 
         let sha256 = FunctionType::new_library(LibraryFunctionIdentifier::CryptoSha256);
         let pedersen = FunctionType::new_library(LibraryFunctionIdentifier::CryptoPedersen);
+        let blake2s = FunctionType::new_library(LibraryFunctionIdentifier::CryptoBlake2s);
 
         let schnorr_scope = Scope::new_intrinsic("schnorr").wrap();
         let schnorr_signature_scope = Scope::new_intrinsic("Signature").wrap();
@@ -223,6 +224,11 @@ impl IntrinsicScope {
             scope.clone(),
             pedersen.identifier(),
             ScopeItem::Type(ScopeTypeItem::new_built_in(Type::Function(pedersen), false)).wrap(),
+        );
+        Scope::insert_item(
+            scope.clone(),
+            blake2s.identifier(),
+            ScopeItem::Type(ScopeTypeItem::new_built_in(Type::Function(blake2s), false)).wrap(),
         );
         Scope::insert_item(
             scope.clone(),

@@ -16,6 +16,7 @@ pub mod convert_from_bits_field;
 pub mod convert_from_bits_signed;
 pub mod convert_from_bits_unsigned;
 pub mod convert_to_bits;
+pub mod crypto_blake2s;
 pub mod crypto_pedersen;
 pub mod crypto_schnorr_signature_verify;
 pub mod crypto_sha256;
@@ -42,6 +43,7 @@ use self::convert_from_bits_field::Function as FromBitsFieldFunction;
 use self::convert_from_bits_signed::Function as FromBitsSignedFunction;
 use self::convert_from_bits_unsigned::Function as FromBitsUnsignedFunction;
 use self::convert_to_bits::Function as ToBitsFunction;
+use self::crypto_blake2s::Function as Blake2sFunction;
 use self::crypto_pedersen::Function as PedersenFunction;
 use self::crypto_schnorr_signature_verify::Function as SchnorrSignatureVerifyFunction;
 use self::crypto_sha256::Function as Sha256Function;
@@ -56,6 +58,8 @@ pub enum Function {
     CryptoSha256(Sha256Function),
     /// The `std::crypto::pedersen` function variant.
     CryptoPedersen(PedersenFunction),
+    /// The `std::crypto::blake2s` function variant.
+    CryptoBlake2s(Blake2sFunction),
     /// The `std::crypto::schnorr::Signature::verify` function variant.
     CryptoSchnorrSignatureVerify(SchnorrSignatureVerifyFunction),
 
@@ -96,6 +100,7 @@ impl Function {
         match self {
             Self::CryptoSha256(inner) => inner.call(location, argument_list),
             Self::CryptoPedersen(inner) => inner.call(location, argument_list),
+            Self::CryptoBlake2s(inner) => inner.call(location, argument_list),
             Self::CryptoSchnorrSignatureVerify(inner) => inner.call(location, argument_list),
 
             Self::ConvertToBits(inner) => inner.call(location, argument_list),
@@ -123,6 +128,7 @@ impl Function {
         match self {
             Self::CryptoSha256(inner) => inner.identifier,
             Self::CryptoPedersen(inner) => inner.identifier,
+            Self::CryptoBlake2s(inner) => inner.identifier,
             Self::CryptoSchnorrSignatureVerify(inner) => inner.identifier,
 
             Self::ConvertToBits(inner) => inner.identifier,
@@ -150,6 +156,7 @@ impl Function {
         match self {
             Self::CryptoSha256(inner) => inner.library_identifier,
             Self::CryptoPedersen(inner) => inner.library_identifier,
+            Self::CryptoBlake2s(inner) => inner.library_identifier,
             Self::CryptoSchnorrSignatureVerify(inner) => inner.library_identifier,
 
             Self::ConvertToBits(inner) => inner.library_identifier,
@@ -177,6 +184,7 @@ impl Function {
         match self {
             Self::CryptoSha256(_) => false,
             Self::CryptoPedersen(_) => false,
+            Self::CryptoBlake2s(_) => false,
             Self::CryptoSchnorrSignatureVerify(_) => false,
 
             Self::ConvertToBits(_) => false,
@@ -204,6 +212,7 @@ impl Function {
         match self {
             Self::CryptoSha256(inner) => inner.location = Some(location),
             Self::CryptoPedersen(inner) => inner.location = Some(location),
+            Self::CryptoBlake2s(inner) => inner.location = Some(location),
             Self::CryptoSchnorrSignatureVerify(inner) => inner.location = Some(location),
 
             Self::ConvertToBits(inner) => inner.location = Some(location),
@@ -231,6 +240,7 @@ impl Function {
         match self {
             Self::CryptoSha256(inner) => inner.location,
             Self::CryptoPedersen(inner) => inner.location,
+            Self::CryptoBlake2s(inner) => inner.location,
             Self::CryptoSchnorrSignatureVerify(inner) => inner.location,
 
             Self::ConvertToBits(inner) => inner.location,
@@ -257,6 +267,7 @@ impl fmt::Display for Function {
         match self {
             Self::CryptoSha256(inner) => write!(f, "{}", inner),
             Self::CryptoPedersen(inner) => write!(f, "{}", inner),
+            Self::CryptoBlake2s(inner) => write!(f, "{}", inner),
             Self::CryptoSchnorrSignatureVerify(inner) => write!(f, "{}", inner),
 
             Self::ConvertToBits(inner) => write!(f, "{}", inner),

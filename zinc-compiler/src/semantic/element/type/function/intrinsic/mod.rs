@@ -30,6 +30,7 @@ use self::stdlib::convert_from_bits_field::Function as StdConvertFromBitsFieldFu
 use self::stdlib::convert_from_bits_signed::Function as StdConvertFromBitsSignedFunction;
 use self::stdlib::convert_from_bits_unsigned::Function as StdConvertFromBitsUnsignedFunction;
 use self::stdlib::convert_to_bits::Function as StdConvertToBitsFunction;
+use self::stdlib::crypto_blake2s::Function as StdCryptoBlake2sFunction;
 use self::stdlib::crypto_pedersen::Function as StdConvertPedersenFunction;
 use self::stdlib::crypto_schnorr_signature_verify::Function as StdCryptoSchnorrSignatureVerifyFunction;
 use self::stdlib::crypto_sha256::Function as StdCryptoSha256Function;
@@ -78,6 +79,9 @@ impl Function {
             ),
             LibraryFunctionIdentifier::CryptoPedersen => Self::StandardLibrary(
                 StandardLibraryFunction::CryptoPedersen(StdConvertPedersenFunction::default()),
+            ),
+            LibraryFunctionIdentifier::CryptoBlake2s => Self::StandardLibrary(
+                StandardLibraryFunction::CryptoBlake2s(StdCryptoBlake2sFunction::default()),
             ),
             LibraryFunctionIdentifier::CryptoSchnorrSignatureVerify => {
                 Self::StandardLibrary(StandardLibraryFunction::CryptoSchnorrSignatureVerify(

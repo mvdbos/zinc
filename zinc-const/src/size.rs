@@ -5,6 +5,9 @@
 /// The `sha256` hash size.
 pub const SHA256_HASH: usize = 32;
 
+/// The `blake2s` hash size.
+pub const BLAKE2S_HASH: usize = 32;
+
 /// The ETH address size.
 pub const ETH_ADDRESS: usize = 20;
 
