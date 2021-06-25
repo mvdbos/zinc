@@ -32,7 +32,7 @@ use self::runners::TestRunner;
 const EXIT_CODE_SUCCESS: i32 = 0;
 const EXIT_CODE_FAILURE: i32 = 1;
 
-static TESTS_DIRECTORY: &str = "zinc-tester/tests/";
+static TESTS_DIRECTORY: &str = "zinc-tester/tests/tmp/";
 
 static PANIC_TEST_DIRECTORY_INVALID: &str = "The test files directory must be valid";
 static PANIC_LAST_SHARED_REFERENCE: &str = "There are no other references at this point";
