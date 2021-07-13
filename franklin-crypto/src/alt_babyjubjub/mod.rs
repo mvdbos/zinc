@@ -617,6 +617,25 @@ fn test_generic_params() {
 }
 
 #[test]
+fn pretty_print_params_default() {
+
+    let generic_params = AltJubjubBn256::new_with_custom_generators(10);
+
+    println!("Creating generators using Blake2s");
+
+    println!("Using personalization `{}`", std::str::from_utf8(constants::PEDERSEN_HASH_GENERATORS_PERSONALIZATION).unwrap());
+
+    println!("Pedersen hash generators:");
+
+    for (i, e) in generic_params.pedersen_hash_generators.iter().enumerate() {
+        let (x, y) = e.into_xy();
+        println!("Generator {}", i);
+        println!("X = {}", x);
+        println!("Y = {}", y);
+    }
+}
+
+#[test]
 fn pretty_print_params_for_blake() {
     use super::group_hash::BlakeHasher;
 
