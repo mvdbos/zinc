@@ -37,8 +37,8 @@ impl Analyzer {
 
         let mut builder = GeneratorGroupExpressionBuilder::default();
 
-        let structure_type = match Scope::resolve_item(scope.clone(), &structure.identifier.name)
-            .map_err(|error| Error::Scope(identifier_location, error))?
+        let structure_type = match Scope::resolve_item(scope.clone(), &structure.identifier)
+            .map_err(|error| Error::Scope(error))?
             .variant
         {
             ScopeItemVariant::Type(Type::Structure(structure)) => structure,

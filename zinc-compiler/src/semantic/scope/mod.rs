@@ -67,8 +67,9 @@ impl Scope {
         identifier: Identifier,
         item: Item,
     ) -> Result<(), Error> {
-        if let Ok(item) = Self::resolve_item(scope.clone(), &identifier.name) {
+        if let Ok(item) = Self::resolve_item(scope.clone(), &identifier) {
             return Err(Error::ItemRedeclared {
+                location: identifier.location,
                 name: identifier.name,
                 reference: item.location,
             });
@@ -85,8 +86,9 @@ impl Scope {
         identifier: Identifier,
         variable: VariableItem,
     ) -> Result<(), Error> {
-        if let Ok(item) = Self::resolve_item(scope.clone(), &identifier.name) {
+        if let Ok(item) = Self::resolve_item(scope.clone(), &identifier) {
             return Err(Error::ItemRedeclared {
+                location: identifier.location,
                 name: identifier.name,
                 reference: item.location,
             });
@@ -106,8 +108,9 @@ impl Scope {
         identifier: Identifier,
         constant: Constant,
     ) -> Result<(), Error> {
-        if let Ok(item) = Self::resolve_item(scope.clone(), &identifier.name) {
+        if let Ok(item) = Self::resolve_item(scope.clone(), &identifier) {
             return Err(Error::ItemRedeclared {
+                location: identifier.location,
                 name: identifier.name,
                 reference: item.location,
             });
@@ -127,8 +130,9 @@ impl Scope {
         identifier: Identifier,
         r#type: Type,
     ) -> Result<(), Error> {
-        if let Ok(item) = Self::resolve_item(scope.clone(), &identifier.name) {
+        if let Ok(item) = Self::resolve_item(scope.clone(), &identifier) {
             return Err(Error::ItemRedeclared {
+                location: identifier.location,
                 name: identifier.name,
                 reference: item.location,
             });
@@ -148,8 +152,9 @@ impl Scope {
         identifier: Identifier,
         module: Rc<RefCell<Scope>>,
     ) -> Result<(), Error> {
-        if let Ok(item) = Self::resolve_item(scope.clone(), &identifier.name) {
+        if let Ok(item) = Self::resolve_item(scope.clone(), &identifier) {
             return Err(Error::ItemRedeclared {
+                location: identifier.location,
                 name: identifier.name,
                 reference: item.location,
             });
@@ -181,8 +186,8 @@ impl Scope {
         let mut current_scope = scope;
 
         for (index, identifier) in path.elements.iter().enumerate() {
-            let item = Self::resolve_item(current_scope.clone(), &identifier.name)
-                .map_err(|error| SemanticError::Scope(identifier.location, error))?;
+            let item = Self::resolve_item(current_scope.clone(), &identifier)
+                .map_err(|error| SemanticError::Scope(error))?;
 
             if index == path.elements.len() - 1 {
                 return Ok(item);
@@ -195,34 +200,31 @@ impl Scope {
                 }
                 ItemVariant::Type(Type::Structure(ref structure)) => structure.scope.to_owned(),
                 _ => {
-                    return Err(SemanticError::Scope(
-                        identifier.location,
-                        Error::ItemIsNotNamespace {
-                            name: identifier.name.to_owned(),
-                        },
-                    ))
+                    return Err(SemanticError::Scope(Error::ItemIsNotNamespace {
+                        location: identifier.location,
+                        name: identifier.name.to_owned(),
+                    }))
                 }
             };
         }
 
-        Err(SemanticError::Scope(
-            path.location,
-            Error::ItemUndeclared {
-                name: path.to_string(),
-            },
-        ))
+        Err(SemanticError::Scope(Error::ItemUndeclared {
+            location: path.location,
+            name: path.to_string(),
+        }))
     }
 
     ///
     /// Resolves the item within the current scope hierarchy.
     ///
-    pub fn resolve_item(scope: Rc<RefCell<Scope>>, identifier: &str) -> Result<Item, Error> {
-        match scope.borrow().items.get(identifier) {
+    pub fn resolve_item(scope: Rc<RefCell<Scope>>, identifier: &Identifier) -> Result<Item, Error> {
+        match scope.borrow().items.get(identifier.name.as_str()) {
             Some(item) => Ok(item.to_owned()),
             None => match scope.borrow().parent {
                 Some(ref parent) => Self::resolve_item(parent.to_owned(), identifier),
                 None => Err(Error::ItemUndeclared {
-                    name: identifier.to_owned(),
+                    location: identifier.location,
+                    name: identifier.name.to_owned(),
                 }),
             },
         }
@@ -237,6 +239,24 @@ impl Scope {
         } else {
             match self.parent {
                 Some(ref parent) => parent.borrow().is_item_declared(identifier),
+                None => false,
+            }
+        }
+    }
+
+    ///
+    /// Checks whether the `main` function is declared within the current scope hierarchy.
+    ///
+    pub fn is_main_function_declared(&self) -> bool {
+        if self.items.contains_key(
+            crate::semantic::element::r#type::function::user::FUNCTION_MAIN_IDENTIFIER,
+        ) {
+            true
+        } else {
+            match self.parent {
+                Some(ref parent) => parent.borrow().is_item_declared(
+                    crate::semantic::element::r#type::function::user::FUNCTION_MAIN_IDENTIFIER,
+                ),
                 None => false,
             }
         }

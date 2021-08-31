@@ -117,6 +117,18 @@ impl Parser {
                 Token {
                     lexeme: Lexeme::Identifier(..),
                     ..
+                }
+                | token
+                @
+                Token {
+                    lexeme: Lexeme::Keyword(Keyword::SelfLowercase),
+                    ..
+                }
+                | token
+                @
+                Token {
+                    lexeme: Lexeme::Keyword(Keyword::SelfUppercase),
+                    ..
                 } => {
                     let location = token.location;
                     let (expression, next) =
@@ -158,19 +170,6 @@ impl Parser {
                     location,
                     None,
                 )),
-                Token {
-                    lexeme: Lexeme::Keyword(keyword @ Keyword::SelfUppercase),
-                    location,
-                } => {
-                    let mut builder = IdentifierBuilder::default();
-                    builder.set_location(location);
-                    builder.set_name(keyword.to_string());
-                    Ok((
-                        ExpressionOperand::Identifier(builder.finish()),
-                        location,
-                        None,
-                    ))
-                }
                 Token { lexeme, location } => Err(Error::Syntax(
                     SyntaxError::expected_expression_or_operand(location, lexeme),
                 )),
@@ -301,7 +300,7 @@ mod tests {
                     "Self".to_owned(),
                 ))),
             ),
-            None,
+            Some(Token::new(Lexeme::Eof, Location::new(1, 5))),
         ));
 
         let result = Parser::default().parse(Rc::new(RefCell::new(TokenStream::new(input))), None);

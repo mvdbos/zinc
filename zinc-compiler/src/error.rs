@@ -6,6 +6,7 @@ use colored::Colorize;
 
 use crate::file::error::Error as FileError;
 use crate::lexical::error::Error as LexicalError;
+use crate::lexical::token::lexeme::keyword::Keyword;
 use crate::lexical::token::location::Location;
 use crate::semantic::casting::error::Error as CastingError;
 use crate::semantic::element::constant::error::Error as ConstantError;
@@ -1757,7 +1758,7 @@ impl Error {
                 )
             }
 
-            Self::Semantic(SemanticError::Scope(location, ScopeError::ItemRedeclared { name, reference })) => {
+            Self::Semantic(SemanticError::Scope(ScopeError::ItemRedeclared { location, name, reference })) => {
                 Self::format_line_with_reference(
                     context,
                     format!(
@@ -1770,7 +1771,7 @@ impl Error {
                     Some("consider giving the latter item another name"),
                 )
             }
-            Self::Semantic(SemanticError::Scope(location, ScopeError::ItemUndeclared { name })) => {
+            Self::Semantic(SemanticError::Scope(ScopeError::ItemUndeclared { location, name })) => {
                 Self::format_line(
                     context,
                     format!(
@@ -1782,7 +1783,7 @@ impl Error {
                     None,
                 )
             }
-            Self::Semantic(SemanticError::Scope(location, ScopeError::ItemIsNotNamespace { name })) => {
+            Self::Semantic(SemanticError::Scope(ScopeError::ItemIsNotNamespace { location, name })) => {
                 Self::format_line(
                     context,
                     format!(
@@ -1866,6 +1867,21 @@ impl Error {
                         .as_str(),
                     location,
                     Some("only functions may be called"),
+                )
+            }
+            Self::Semantic(SemanticError::Element(location, ElementError::Type(TypeError::Function(FunctionTypeError::FunctionMethodSelfNotFirst { function, position, reference })))) => {
+                Self::format_line_with_reference(
+                    context,
+                    format!(
+                        "method `{}` expected the `{}` binding to be at the first position, but found at the position #`{}`",
+                        function,
+                        Keyword::SelfLowercase.to_string(),
+                        position,
+                    )
+                        .as_str(),
+                    location,
+                    Some(reference),
+                    Some(format!("consider moving the `{}` binding to the first place", Keyword::SelfLowercase.to_string()).as_str()),
                 )
             }
             Self::Semantic(SemanticError::Element(location, ElementError::Type(TypeError::Function(FunctionTypeError::BuiltIn(BuiltInFunctionTypeError::Unknown { function }))))) => {

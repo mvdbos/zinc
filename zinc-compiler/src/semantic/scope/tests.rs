@@ -20,8 +20,8 @@ fn main() {
 "#;
 
     let expected = Err(Error::Semantic(SemanticError::Scope(
-        Location::new(5, 18),
         ScopeError::ItemIsNotNamespace {
+            location: Location::new(5, 18),
             name: "NOT_NAMESPACE".to_owned(),
         },
     )));
@@ -43,8 +43,8 @@ fn main() {
 "#;
 
     let expected = Err(Error::Semantic(SemanticError::Scope(
-        Location::new(5, 9),
         ScopeError::ItemRedeclared {
+            location: Location::new(5, 13),
             name: "result".to_owned(),
             reference: Some(Location::new(3, 9)),
         },
@@ -64,8 +64,8 @@ fn main() {
 "#;
 
     let expected = Err(Error::Semantic(SemanticError::Scope(
-        Location::new(3, 5),
         ScopeError::ItemUndeclared {
+            location: Location::new(3, 5),
             name: "result".to_owned(),
         },
     )));
@@ -88,8 +88,8 @@ fn main() {
 "#;
 
     let expected = Err(Error::Semantic(SemanticError::Scope(
-        Location::new(7, 31),
         ScopeError::ItemUndeclared {
+            location: Location::new(7, 31),
             name: "Exists".to_owned(),
         },
     )));

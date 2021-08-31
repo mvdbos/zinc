@@ -34,7 +34,7 @@ implementation_local_statement =
 type_statement = 'type', identifier, '=', type ;
 struct_statement = 'struct', '{', field_list, '}' ;
 enum_statement = 'enum', '{', variant_list, '}' ;
-fn_statement = 'fn', identifier, '(', field_list, ')', [ '->', type ], block_expression ;
+fn_statement = 'fn', identifier, '(', pattern_binding_list, ')', [ '->', type ], block_expression ;
 mod_statement = 'mod', identifier ;
 use_statement = 'use', path_expression ;
 impl_statement = 'impl', identifier, '{', { implementation_local_statement }, '}' ;
@@ -73,6 +73,8 @@ operand_terminal =
   | struct_expression
   | literal
   | identifier
+  | 'Self'
+  | 'self'
 ;
 
 expression_list = [ expression, { ',', expression } ] ;
@@ -121,6 +123,13 @@ pattern_match =
   | operand_path
   | '_'
 ;
+
+pattern_binding =
+    [ 'mut' ], identifier, ':', type
+  | [ 'mut' ], 'self'
+  | '_', ':', type
+;
+pattern_binding_list = [ pattern_binding, { ',', pattern_binding } ] ;
 
 field = identifier, ':', type ;
 field_list = [ field, { ',', field } ] ;

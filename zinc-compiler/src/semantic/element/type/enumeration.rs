@@ -79,14 +79,12 @@ impl Enumeration {
         };
 
         for (identifier, value) in variants_bigint.into_iter() {
-            let location = identifier.location;
-
             let mut constant = IntegerConstant::new(value, false, minimal_bitlength);
 
             constant.set_enumeration(enumeration.clone());
 
             Scope::declare_constant(scope.clone(), identifier, Constant::Integer(constant))
-                .map_err(|error| Error::Scope(location, error))?;
+                .map_err(|error| Error::Scope(error))?;
         }
 
         scope

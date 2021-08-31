@@ -47,14 +47,14 @@ impl Operand {
         match self {
             Self::Constant(inner) => inner.write_all_to_bytecode(bytecode),
             Self::Place(inner) => {
-                let location = inner.location;
+                let location = inner.identifier.location;
                 let is_place_indexed = !inner.elements.is_empty();
                 let element_size = inner.element_size;
                 let total_size = inner.total_size;
 
                 let address = bytecode
                     .borrow()
-                    .get_variable_address(inner.identifier.as_str())
+                    .get_variable_address(inner.identifier.name.as_str())
                     .expect(crate::PANIC_VALIDATED_DURING_SEMANTIC_ANALYSIS);
 
                 inner.write_all_to_bytecode(bytecode.clone());

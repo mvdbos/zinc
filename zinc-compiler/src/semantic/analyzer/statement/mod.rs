@@ -15,6 +15,7 @@ use crate::generator::statement::declaration::Statement as GeneratorDeclarationS
 use crate::generator::statement::function::Statement as GeneratorFunctionStatement;
 use crate::generator::statement::loop_for::Statement as GeneratorForLoopStatement;
 use crate::generator::statement::Statement as GeneratorStatement;
+use crate::lexical::token::lexeme::keyword::Keyword;
 use crate::semantic::analyzer::expression::block::Analyzer as BlockAnalyzer;
 use crate::semantic::analyzer::expression::hint::Hint as TranslationHint;
 use crate::semantic::analyzer::expression::Analyzer as ExpressionAnalyzer;
@@ -35,6 +36,7 @@ use crate::semantic::scope::item::variant::variable::Variable as ScopeVariableIt
 use crate::semantic::scope::item::variant::Variant as ScopeItemVariant;
 use crate::semantic::scope::stack::Stack as ScopeStack;
 use crate::semantic::scope::Scope;
+use crate::syntax::tree::identifier::Identifier;
 use crate::syntax::tree::pattern_binding::variant::Variant as BindingPatternVariant;
 use crate::syntax::tree::statement::local_fn::Statement as FunctionLocalStatement;
 use crate::syntax::tree::statement::local_impl::Statement as ImplementationLocalStatement;
@@ -177,14 +179,29 @@ impl Analyzer {
         let location = statement.location;
 
         let mut arguments = Vec::with_capacity(statement.argument_bindings.len());
-        for argument_binding in statement.argument_bindings.iter() {
+        for (index, argument_binding) in statement.argument_bindings.iter().enumerate() {
             let identifier = match argument_binding.variant {
-                BindingPatternVariant::Binding(ref identifier) => identifier,
-                BindingPatternVariant::MutableBinding(ref identifier) => identifier,
+                BindingPatternVariant::Binding { ref identifier, .. } => identifier.name.to_owned(),
                 BindingPatternVariant::Wildcard => continue,
+                BindingPatternVariant::SelfAlias { .. } => {
+                    if index != 0 {
+                        return Err(Error::Element(
+                            statement.identifier.location,
+                            ElementError::Type(TypeError::Function(
+                                FunctionTypeError::function_method_self_not_first(
+                                    statement.identifier.name.clone(),
+                                    index + 1,
+                                    argument_binding.location,
+                                ),
+                            )),
+                        ));
+                    }
+
+                    Keyword::SelfLowercase.to_string()
+                }
             };
             arguments.push((
-                identifier.name.clone(),
+                identifier,
                 Type::from_type_variant(&argument_binding.r#type.variant, self.scope_stack.top())?,
             ));
         }
@@ -207,25 +224,60 @@ impl Analyzer {
             .expect(crate::PANIC_MUTEX_SYNC)
             .insert(unique_id, r#type.to_string());
         Scope::declare_type(self.scope_stack.top(), statement.identifier.clone(), r#type)
-            .map_err(|error| Error::Scope(location, error))?;
+            .map_err(|error| Error::Scope(error))?;
 
         self.scope_stack.push();
         for argument_binding in statement.argument_bindings.into_iter() {
-            let (identifier, is_mutable) = match argument_binding.variant {
-                BindingPatternVariant::Binding(identifier) => (identifier, false),
-                BindingPatternVariant::MutableBinding(identifier) => (identifier, true),
-                BindingPatternVariant::Wildcard => continue,
-            };
-            let identifier_location = identifier.location;
-            let r#type =
-                Type::from_type_variant(&argument_binding.r#type.variant, self.scope_stack.top())?;
+            match argument_binding.variant {
+                BindingPatternVariant::Binding {
+                    identifier,
+                    is_mutable,
+                } => {
+                    let r#type = Type::from_type_variant(
+                        &argument_binding.r#type.variant,
+                        self.scope_stack.top(),
+                    )?;
 
-            Scope::declare_variable(
-                self.scope_stack.top(),
-                identifier,
-                ScopeVariableItem::new(is_mutable, r#type),
-            )
-            .map_err(|error| Error::Scope(identifier_location, error))?;
+                    Scope::declare_variable(
+                        self.scope_stack.top(),
+                        identifier,
+                        ScopeVariableItem::new(is_mutable, r#type),
+                    )?;
+                }
+                BindingPatternVariant::Wildcard => continue,
+                BindingPatternVariant::SelfAlias {
+                    location,
+                    is_mutable,
+                } => {
+                    let identifier = Identifier::new(location, Keyword::SelfLowercase.to_string());
+                    let r#type = Type::from_type_variant(
+                        &argument_binding.r#type.variant,
+                        self.scope_stack.top(),
+                    )?;
+
+                    Scope::declare_variable(
+                        self.scope_stack.top(),
+                        identifier,
+                        ScopeVariableItem::new(is_mutable, r#type),
+                    )?;
+                }
+            }
+
+            // let (identifier, is_mutable) = match argument_binding.variant {
+            //     BindingPatternVariant::Binding(identifier) => (identifier, false),
+            //     BindingPatternVariant::MutableBinding(identifier) => (identifier, true),
+            //     BindingPatternVariant::Wildcard => continue,
+            // };
+            // let identifier_location = identifier.location;
+            // let r#type =
+            //     Type::from_type_variant(&argument_binding.r#type.variant, self.scope_stack.top())?;
+
+            // Scope::declare_variable(
+            //     self.scope_stack.top(),
+            //     identifier,
+            //     ScopeVariableItem::new(is_mutable, r#type),
+            // )
+            // .map_err(|error| Error::Scope(identifier_location, error))?;
         }
 
         let return_expression_location = match statement
@@ -284,8 +336,8 @@ impl Analyzer {
         let mut intermediate = Vec::new();
 
         let structure_scope =
-            match Scope::resolve_item(self.scope_stack.top(), statement.identifier.name.as_str())
-                .map_err(|error| Error::Scope(identifier_location, error))?
+            match Scope::resolve_item(self.scope_stack.top(), &statement.identifier)
+                .map_err(|error| Error::Scope(error))?
                 .variant
             {
                 ScopeItemVariant::Type(Type::Structure(structure)) => structure.scope,
@@ -337,7 +389,7 @@ impl Analyzer {
             statement.identifier.clone(),
             ScopeVariableItem::new(statement.is_mutable, r#type.clone()),
         )
-        .map_err(|error| Error::Scope(location, error))?;
+        .map_err(|error| Error::Scope(error))?;
 
         Ok(GeneratorDeclarationStatement::new(
             location,
@@ -388,7 +440,7 @@ impl Analyzer {
             statement.index_identifier,
             ScopeVariableItem::new(false, Type::scalar(is_index_signed, index_bitlength)),
         )
-        .map_err(|error| Error::Scope(location, error))?;
+        .map_err(|error| Error::Scope(error))?;
 
         let while_condition = if let Some(expression) = statement.while_condition {
             let location = expression.location;
@@ -461,7 +513,6 @@ impl Analyzer {
     /// Analyzes a compile time only constant declaration statement.
     ///
     fn r#const(&mut self, statement: ConstStatement) -> Result<(), Error> {
-        let location = statement.location;
         let type_location = statement.r#type.location;
         let expression_location = statement.expression.location;
 
@@ -484,7 +535,7 @@ impl Analyzer {
         };
 
         Scope::declare_constant(self.scope_stack.top(), statement.identifier, constant)
-            .map_err(|error| Error::Scope(location, error))?;
+            .map_err(|error| Error::Scope(error))?;
 
         Ok(())
     }
@@ -493,12 +544,10 @@ impl Analyzer {
     /// Analyzes a compile time only type alias declaration statement.
     ///
     fn r#type(&mut self, statement: TypeStatement) -> Result<(), Error> {
-        let location = statement.location;
-
         let r#type = Type::from_type_variant(&statement.r#type.variant, self.scope_stack.top())?;
 
         Scope::declare_type(self.scope_stack.top(), statement.identifier, r#type)
-            .map_err(|error| Error::Scope(location, error))?;
+            .map_err(|error| Error::Scope(error))?;
 
         Ok(())
     }
@@ -507,8 +556,6 @@ impl Analyzer {
     /// Analyzes a compile time only structure declaration statement.
     ///
     fn r#struct(&mut self, statement: StructStatement) -> Result<(), Error> {
-        let location = statement.location;
-
         let mut fields: Vec<(String, Type)> = Vec::with_capacity(statement.fields.len());
         for field in statement.fields.into_iter() {
             if fields
@@ -542,7 +589,7 @@ impl Analyzer {
             .expect(crate::PANIC_MUTEX_SYNC)
             .insert(unique_id, r#type.to_string());
         Scope::declare_type(self.scope_stack.top(), statement.identifier, r#type)
-            .map_err(|error| Error::Scope(location, error))?;
+            .map_err(|error| Error::Scope(error))?;
 
         Ok(())
     }
@@ -551,8 +598,6 @@ impl Analyzer {
     /// Analyzes a compile time only enumeration declaration statement.
     ///
     fn r#enum(&mut self, statement: EnumStatement) -> Result<(), Error> {
-        let location = statement.location;
-
         let unique_id = TYPE_INDEX.read().expect(crate::PANIC_MUTEX_SYNC).len();
         let r#type = Type::enumeration(
             statement.identifier.clone(),
@@ -566,7 +611,7 @@ impl Analyzer {
             .expect(crate::PANIC_MUTEX_SYNC)
             .insert(unique_id, r#type.to_string());
         Scope::declare_type(self.scope_stack.top(), statement.identifier, r#type)
-            .map_err(|error| Error::Scope(location, error))?;
+            .map_err(|error| Error::Scope(error))?;
 
         Ok(())
     }
@@ -588,7 +633,7 @@ impl Analyzer {
             }
         };
         Scope::declare_module(self.scope_stack.top(), statement.identifier, module)
-            .map_err(|error| Error::Scope(identifier_location, error))?;
+            .map_err(|error| Error::Scope(error))?;
 
         Ok(())
     }
@@ -616,7 +661,7 @@ impl Analyzer {
             .last()
             .expect(crate::PANIC_VALIDATED_DURING_SYNTAX_ANALYSIS);
         Scope::declare_item(self.scope_stack.top(), path_last_element.to_owned(), item)
-            .map_err(|error| Error::Scope(path_last_element.location, error))?;
+            .map_err(|error| Error::Scope(error))?;
 
         Ok(())
     }
