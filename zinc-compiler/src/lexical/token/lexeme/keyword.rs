@@ -42,7 +42,7 @@ pub enum Keyword {
     // operators
     As,
 
-    // special
+    // aliases
     SelfUppercase,
     SelfLowercase,
 

@@ -11,6 +11,7 @@ use std::rc::Rc;
 use crate::error::Error;
 use crate::semantic::analyzer::entry::Analyzer as EntryAnalyzer;
 use crate::semantic::analyzer::module::Analyzer as ModuleAnalyzer;
+use crate::semantic::error::Error as SemanticError;
 use crate::semantic::scope::Scope;
 use crate::Parser;
 
@@ -46,3 +47,19 @@ pub(crate) fn compile_module(input: &str) -> Result<Rc<RefCell<Scope>>, Error> {
 
     Ok(scope)
 }
+
+#[test]
+fn error_entry_point_missing() {
+    let input = r#"
+fn another() -> u8 {
+    42
+}
+"#;
+
+    let expected = Err(Error::Semantic(SemanticError::EntryPointMissing));
+
+    let result = crate::semantic::tests::compile_entry(input);
+
+    assert_eq!(result, expected);
+}
+

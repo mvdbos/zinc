@@ -32,15 +32,25 @@ implementation_local_statement =
 ;
 
 type_statement = 'type', identifier, '=', type ;
+
 struct_statement = 'struct', '{', field_list, '}' ;
+
 enum_statement = 'enum', '{', variant_list, '}' ;
+
 fn_statement = 'fn', identifier, '(', pattern_binding_list, ')', [ '->', type ], block_expression ;
+
 mod_statement = 'mod', identifier ;
+
 use_statement = 'use', path_expression ;
+
 impl_statement = 'impl', identifier, '{', { implementation_local_statement }, '}' ;
+
 const_statement = 'const', identifier, ':', type, '=', expression ;
+
 let_statement = 'let', [ 'mut' ], identifier, [ ':', type ], '=', expression ;
+
 loop_statement = 'for', identifier, 'in', expression, [ 'while', expression ], block_expression ;
+
 empty_statement = ';' ;
 
 (* Expressions *)
@@ -129,12 +139,12 @@ pattern_binding =
   | [ 'mut' ], 'self'
   | '_', ':', type
 ;
-pattern_binding_list = [ pattern_binding, { ',', pattern_binding } ] ;
+pattern_binding_list = [ pattern_binding, { ',', [ pattern_binding ] } ] ;
 
 field = identifier, ':', type ;
-field_list = [ field, { ',', field } ] ;
+field_list = [ field, { ',', [ field ] } ] ;
 
 variant = identifier, '=', integer ;
-variant_list = [ variant, { ',', variant } ] ;
+variant_list = [ variant, { ',', [ variant ] } ] ;
 
 ```

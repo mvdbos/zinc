@@ -113,16 +113,16 @@ mod tests {
     use crate::lexical::token::location::Location;
     use crate::lexical::token::Token;
     use crate::syntax::error::Error as SyntaxError;
-    use crate::syntax::tree::identifier::Identifier;
     use crate::syntax::tree::expression::tree::node::operand::Operand as ExpressionOperand;
     use crate::syntax::tree::expression::tree::node::Node as ExpressionTreeNode;
     use crate::syntax::tree::expression::tree::Tree as ExpressionTree;
+    use crate::syntax::tree::identifier::Identifier;
     use crate::syntax::tree::r#type::variant::Variant as TypeVariant;
     use crate::syntax::tree::r#type::Type;
 
     #[test]
     fn ok_bool() {
-        let input = "bool";
+        let input = r#"bool"#;
 
         let expected = Ok((Type::new(Location::new(1, 1), TypeVariant::boolean()), None));
 

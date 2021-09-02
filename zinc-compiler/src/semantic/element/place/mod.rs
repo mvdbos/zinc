@@ -23,10 +23,10 @@ use crate::semantic::element::constant::Constant;
 use crate::semantic::element::r#type::Type;
 use crate::semantic::element::value::Value;
 use crate::semantic::element::Element;
+use crate::syntax::tree::identifier::Identifier;
 
 use self::element::Element as PlaceElement;
 use self::error::Error;
-use crate::syntax::tree::identifier::Identifier;
 
 #[derive(Debug, Clone)]
 pub struct Place {

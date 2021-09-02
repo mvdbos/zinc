@@ -17,9 +17,9 @@ use crate::syntax::tree::r#type::Type;
 pub struct Builder {
     location: Option<Location>,
     identifier: Option<Identifier>,
+    r#type: Option<Type>,
     is_mutable: bool,
     wildcard: bool,
-    r#type: Option<Type>,
     is_self_alias: bool,
     self_location: Option<Location>,
 }
@@ -33,16 +33,16 @@ impl Builder {
         self.identifier = Some(value);
     }
 
+    pub fn set_type(&mut self, value: Type) {
+        self.r#type = Some(value);
+    }
+
     pub fn set_is_mutable(&mut self) {
         self.is_mutable = true;
     }
 
     pub fn set_is_wildcard(&mut self) {
         self.wildcard = true;
-    }
-
-    pub fn set_type(&mut self, value: Type) {
-        self.r#type = Some(value);
     }
 
     pub fn set_is_self_alias(&mut self) {

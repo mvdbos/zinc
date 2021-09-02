@@ -100,6 +100,7 @@ mod tests {
     use std::cell::RefCell;
     use std::rc::Rc;
 
+    use super::Parser;
     use crate::lexical::stream::TokenStream;
     use crate::lexical::token::lexeme::Lexeme;
     use crate::lexical::token::location::Location;
@@ -109,8 +110,6 @@ mod tests {
     use crate::syntax::tree::pattern_binding::Pattern as BindingPattern;
     use crate::syntax::tree::r#type::variant::Variant as TypeVariant;
     use crate::syntax::tree::r#type::Type;
-
-    use super::Parser;
 
     #[test]
     fn ok_empty() {

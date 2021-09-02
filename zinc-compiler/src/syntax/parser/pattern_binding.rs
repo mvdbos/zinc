@@ -175,7 +175,7 @@ mod tests {
     }
 
     #[test]
-    fn ok_mutable_binding() {
+    fn ok_binding_mutable() {
         let input = r#"mut value: u8"#;
 
         let expected = Ok((
