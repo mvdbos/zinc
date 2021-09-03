@@ -42,11 +42,11 @@ pub enum Keyword {
     // operators
     As,
 
-    // special
+    // aliases
     SelfUppercase,
+    SelfLowercase,
 
     // reserved
-    SelfLowercase,
     Pub,
     Ref,
     Extern,
@@ -112,8 +112,8 @@ impl TryFrom<&str> for Keyword {
             "as" => return Ok(Self::As),
 
             "Self" => return Ok(Self::SelfUppercase),
-
             "self" => return Ok(Self::SelfLowercase),
+
             "pub" => return Ok(Self::Pub),
             "ref" => return Ok(Self::Ref),
             "extern" => return Ok(Self::Extern),
@@ -210,8 +210,8 @@ impl fmt::Display for Keyword {
             Self::As => write!(f, "as"),
 
             Self::SelfUppercase => write!(f, "Self"),
-
             Self::SelfLowercase => write!(f, "self"),
+
             Self::Pub => write!(f, "pub"),
             Self::Ref => write!(f, "ref"),
             Self::Extern => write!(f, "extern"),

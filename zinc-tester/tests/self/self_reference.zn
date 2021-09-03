@@ -1,0 +1,25 @@
+//# { "cases": [ {
+//#     "case": "default",
+//#     "input": {
+//#         "foo": {
+//#             "bar": "3"
+//#         },
+//#         "foo_bar": "5"
+//#     },
+//#     "expect": "8"
+//# } ] }
+
+// new
+struct Foo {
+    bar: u32,
+}
+
+impl Foo {
+    fn baz(self, foo_bar: u32) -> u32 {
+        self.bar + foo_bar
+    }
+}
+
+fn main(foo: Foo, foo_bar: u32) -> u32 {
+    foo.baz(foo_bar)
+}

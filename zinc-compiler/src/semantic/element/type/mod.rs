@@ -164,18 +164,18 @@ impl Type {
         identifier: String,
         unique_id: usize,
         fields: Vec<(String, Self)>,
-        scope_parent: Option<Rc<RefCell<Scope>>>,
+        scope: Option<Rc<RefCell<Scope>>>,
     ) -> Self {
-        Self::Structure(Structure::new(identifier, unique_id, fields, scope_parent))
+        Self::Structure(Structure::new(identifier, unique_id, fields, scope))
     }
 
     pub fn enumeration(
         identifier: Identifier,
         unique_id: usize,
         variants: Vec<Variant>,
-        scope_parent: Option<Rc<RefCell<Scope>>>,
+        scope: Option<Rc<RefCell<Scope>>>,
     ) -> Result<Self, Error> {
-        Enumeration::new(identifier, unique_id, variants, scope_parent).map(Self::Enumeration)
+        Enumeration::new(identifier, unique_id, variants, scope).map(Self::Enumeration)
     }
 
     pub fn new_std_function(builtin_identifier: BuiltinIdentifier) -> Self {

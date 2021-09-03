@@ -24,7 +24,7 @@
 				},
 				{
 					"name": "keyword.other",
-					"match": "\\b(bool|u[0-9]+|i[0-9]+|field|true|false|as)\\b"
+					"match": "\\b(bool|u[0-9]+|i[0-9]+|field|true|false|as|self)\\b"
 				}
 			]
 		},

@@ -9,7 +9,7 @@ use crate::semantic::scope::error::Error as ScopeError;
 #[derive(Debug, PartialEq)]
 pub enum Error {
     Element(Location, ElementError),
-    Scope(Location, ScopeError),
+    Scope(ScopeError),
 
     MatchScrutineeInvalidType {
         location: Location,
@@ -86,4 +86,10 @@ pub enum Error {
         location: Location,
         found: String,
     },
+}
+
+impl From<ScopeError> for Error {
+    fn from(inner: ScopeError) -> Self {
+        Self::Scope(inner)
+    }
 }

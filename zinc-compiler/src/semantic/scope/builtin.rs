@@ -142,11 +142,13 @@ impl BuiltInItems {
         );
 
         let mut std_convert_scope = Scope::default();
+
         let std_convert_to_bits = FunctionType::new_std(BuiltinIdentifier::ToBits);
         let std_convert_from_bits_unsigned =
             FunctionType::new_std(BuiltinIdentifier::UnsignedFromBits);
         let std_convert_from_bits_signed = FunctionType::new_std(BuiltinIdentifier::SignedFromBits);
         let std_convert_from_bits_field = FunctionType::new_std(BuiltinIdentifier::FieldFromBits);
+
         std_convert_scope.items.insert(
             std_convert_to_bits.identifier(),
             ScopeItem::new(
@@ -177,9 +179,11 @@ impl BuiltInItems {
         );
 
         let mut std_array_scope = Scope::default();
+
         let std_array_reverse = FunctionType::new_std(BuiltinIdentifier::ArrayReverse);
         let std_array_truncate = FunctionType::new_std(BuiltinIdentifier::ArrayTruncate);
         let std_array_pad = FunctionType::new_std(BuiltinIdentifier::ArrayPad);
+
         std_array_scope.items.insert(
             std_array_reverse.identifier(),
             ScopeItem::new(

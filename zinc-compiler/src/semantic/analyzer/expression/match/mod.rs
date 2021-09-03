@@ -215,7 +215,6 @@ impl Analyzer {
                     result
                 }
                 MatchPatternVariant::Binding(identifier) => {
-                    let location = identifier.location;
                     is_exhausted = true;
 
                     scope_stack.push();
@@ -224,7 +223,7 @@ impl Analyzer {
                         identifier.clone(),
                         ScopeVariableItem::new(false, scrutinee_type.clone()),
                     )
-                    .map_err(|error| Error::Scope(location, error))?;
+                    .map_err(|error| Error::Scope(error))?;
                     let (result, branch) = ExpressionAnalyzer::new(scope_stack.top())
                         .analyze(expression, TranslationHint::Value)?;
                     scope_stack.pop();

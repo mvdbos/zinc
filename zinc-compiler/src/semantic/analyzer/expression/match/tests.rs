@@ -17,7 +17,85 @@ use crate::semantic::scope::Scope;
 static PANIC_COMPILE_DEPENDENCY: &str = "Dependencies must be successfully compiled";
 
 #[test]
-fn error_match_scrutinee_invalid_type() {
+fn ok_boolean() {
+    let input = r#"
+fn main() -> u8 {
+    let condition = true;
+    match condition {
+        true => 42,
+        false => 69,
+    }
+}
+"#;
+
+    assert!(crate::semantic::tests::compile_entry(input).is_ok());
+}
+
+#[test]
+fn ok_integer() {
+    let input = r#"
+fn main() -> bool {
+    let value = 42;
+    match value {
+        1 => false,
+        2 => false,
+        42 => true,
+        _ => false,
+    }
+}
+"#;
+
+    assert!(crate::semantic::tests::compile_entry(input).is_ok());
+}
+
+#[test]
+fn ok_enumeration_two_variants() {
+    let input = r#"
+enum List {
+    A = 1,
+    B = 2,
+}
+
+fn main() -> u8 {
+    let value = List::A;
+    match value {
+        List::A => 10,
+        List::B => 20,
+    }
+}
+"#;
+
+    assert!(crate::semantic::tests::compile_entry(input).is_ok());
+}
+
+#[test]
+fn ok_enumeration_five_variants() {
+    let input = r#"
+enum List {
+    A = 1,
+    B = 2,
+    C = 3,
+    D = 4,
+    E = 5,
+}
+
+fn main() -> u8 {
+    let value = List::A;
+    match value {
+        List::A => 10,
+        List::B => 20,
+        List::C => 30,
+        List::D => 40,
+        List::E => 50,
+    }
+}
+"#;
+
+    assert!(crate::semantic::tests::compile_entry(input).is_ok());
+}
+
+#[test]
+fn error_scrutinee_invalid_type() {
     let input = r#"
 fn main() {
     let scrutinee = ();
@@ -39,7 +117,7 @@ fn main() {
 }
 
 #[test]
-fn error_match_not_exhausted() {
+fn error_not_exhausted() {
     let input = r#"
 fn main() {
     let scrutinee = 42;
@@ -60,7 +138,7 @@ fn main() {
 }
 
 #[test]
-fn error_match_less_than_two_branches() {
+fn error_less_than_two_branches() {
     let input = r#"
 fn main() {
     let scrutinee = 42;
@@ -80,7 +158,7 @@ fn main() {
 }
 
 #[test]
-fn error_match_branch_unreachable() {
+fn error_branch_unreachable() {
     let input = r#"
 fn main() {
     let scrutinee = 42;
@@ -102,7 +180,7 @@ fn main() {
 }
 
 #[test]
-fn error_match_branch_unreachable_exhausted_boolean() {
+fn error_branch_unreachable_exhausted_boolean() {
     let input = r#"
 fn main() {
     let scrutinee = true;
@@ -124,7 +202,7 @@ fn main() {
 }
 
 #[test]
-fn error_match_branch_unreachable_exhausted_enumeration() {
+fn error_branch_unreachable_exhausted_enumeration() {
     let input = r#"
 enum List {
     One = 1,
@@ -153,7 +231,7 @@ fn main() {
 }
 
 #[test]
-fn error_match_branch_pattern_path_expected_constant() {
+fn error_branch_pattern_path_expected_constant() {
     let module_1 = r#"
 type X = field;
 "#;
@@ -190,7 +268,7 @@ fn main() -> u8 {
 }
 
 #[test]
-fn error_match_branch_pattern_invalid_type() {
+fn error_branch_pattern_invalid_type() {
     let input = r#"
 fn main() {
     let scrutinee = 42;
@@ -216,7 +294,7 @@ fn main() {
 }
 
 #[test]
-fn error_match_branch_expression_invalid_type() {
+fn error_branch_expression_invalid_type() {
     let input = r#"
 fn main() {
     let scrutinee = 42;
@@ -242,7 +320,7 @@ fn main() {
 }
 
 #[test]
-fn error_match_branch_duplicate_boolean() {
+fn error_branch_duplicate_boolean() {
     let input = r#"
 fn main() {
     let scrutinee = true;
@@ -264,7 +342,7 @@ fn main() {
 }
 
 #[test]
-fn error_match_branch_duplicate_integer() {
+fn error_branch_duplicate_integer() {
     let input = r#"
 fn main() {
     let scrutinee = 42;

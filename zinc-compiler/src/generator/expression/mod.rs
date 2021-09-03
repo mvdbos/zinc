@@ -351,7 +351,7 @@ impl Expression {
         let is_place_indexed = !place.elements.is_empty();
         let address = bytecode
             .borrow()
-            .get_variable_address(place.identifier.as_str())
+            .get_variable_address(place.identifier.name.as_str())
             .expect(crate::PANIC_VALIDATED_DURING_SEMANTIC_ANALYSIS);
         let element_size = place.element_size;
         let total_size = place.total_size;
@@ -386,7 +386,7 @@ impl Expression {
         let is_place_indexed = !place.elements.is_empty();
         let address = bytecode
             .borrow()
-            .get_variable_address(place.identifier.as_str())
+            .get_variable_address(place.identifier.name.as_str())
             .expect(crate::PANIC_VALIDATED_DURING_SEMANTIC_ANALYSIS);
         let element_size = place.element_size;
         let total_size = place.total_size;

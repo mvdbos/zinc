@@ -29,6 +29,7 @@ use crate::generator::expression::operand::Operand as GeneratorExpressionOperand
 use crate::generator::expression::operator::Operator as GeneratorExpressionOperator;
 use crate::generator::expression::Expression as GeneratorExpression;
 use crate::lexical::token::location::Location;
+use crate::semantic::element::access::FieldVariant as FieldAccessVariant;
 use crate::semantic::element::constant::Constant;
 use crate::semantic::element::error::Error as ElementError;
 use crate::semantic::element::place::element::Element as PlaceElement;
@@ -47,6 +48,7 @@ use crate::syntax::tree::expression::tree::Tree as ExpressionTree;
 
 use self::array::Analyzer as ArrayAnalyzer;
 use self::block::Analyzer as BlockAnalyzer;
+use self::call::r#type::Type as CallType;
 use self::call::Analyzer as CallAnalyzer;
 use self::conditional::Analyzer as ConditionalAnalyzer;
 use self::field_index::Analyzer as MemberAnalyzer;
@@ -72,7 +74,7 @@ pub struct Analyzer {
     scope_stack: ScopeStack,
     evaluation_stack: EvaluationStack,
     intermediate: GeneratorExpression,
-    is_next_call_builtin: bool,
+    next_call_type: CallType,
 }
 
 impl Analyzer {
@@ -84,7 +86,7 @@ impl Analyzer {
             scope_stack: ScopeStack::new(scope),
             evaluation_stack: EvaluationStack::new(),
             intermediate: GeneratorExpression::new(),
-            is_next_call_builtin: false,
+            next_call_type: CallType::Normal,
         }
     }
 
@@ -480,7 +482,9 @@ impl Analyzer {
                     self.intermediate.push_operator(tree.location, operator);
                 }
                 ExpressionOperator::CallBuiltIn => {
-                    self.is_next_call_builtin = true;
+                    log::trace!("Traversing an expression tree operator call builtin");
+
+                    self.next_call_type = CallType::BuiltIn;
                     self.left_local(tree.left, operator)?;
                 }
 
@@ -606,10 +610,9 @@ impl Analyzer {
             callback(operand_1, operand_2).map_err(|error| Error::Element(location, error))?;
 
         if !place.is_mutable {
-            let item_location =
-                Scope::resolve_item(self.scope_stack.top(), place.identifier.as_str())
-                    .map_err(|error| Error::Scope(place.location, error))?
-                    .location;
+            let item_location = Scope::resolve_item(self.scope_stack.top(), &place.identifier)
+                .map_err(|error| Error::Scope(error))?
+                .location;
             return Err(Error::Element(
                 location,
                 ElementError::Place(PlaceError::MutatingImmutableMemory {
@@ -825,7 +828,8 @@ impl Analyzer {
         let (result, access) = Element::field(operand_1, operand_2)
             .map_err(|error| Error::Element(location, error))?;
 
-        match result {
+        match access {
+            FieldAccessVariant::Field(access) => match result {
             Element::Place(mut place) => {
                 place.push_element(PlaceElement::Field { access });
 
@@ -838,6 +842,29 @@ impl Analyzer {
                 self.evaluation_stack.push(StackElement::Evaluated(element));
 
                 Ok(Some(GeneratorExpressionOperator::slice(access)))
+                }
+            },
+            FieldAccessVariant::Method(instance) => {
+                let instance = if let Element::Place(instance) = instance {
+                    let (instance, intermedidate) = Self::evaluate(
+                        self.scope_stack.top(),
+                        StackElement::Evaluated(Element::Place(instance)),
+                        TranslationHint::Value,
+                    )?;
+
+                    if let Some(instance) = intermedidate {
+                        self.intermediate.push_operand(instance);
+                    }
+
+                    instance
+                } else {
+                    instance
+                };
+
+                self.evaluation_stack.push(StackElement::Evaluated(result));
+                self.next_call_type = CallType::Method { instance };
+
+                Ok(None)
             }
         }
     }
@@ -846,8 +873,7 @@ impl Analyzer {
     /// Analyzes the function call operation.
     ///
     fn call(&mut self, location: Location) -> Result<GeneratorExpressionOperator, Error> {
-        let is_call_builtin = self.is_next_call_builtin;
-        self.is_next_call_builtin = false;
+        let call_type = self.next_call_type.take();
 
         let (operand_2, _intermediate_2) = Self::evaluate(
             self.scope_stack.top(),
@@ -864,7 +890,7 @@ impl Analyzer {
             self.scope_stack.top(),
             operand_1,
             operand_2,
-            is_call_builtin,
+            call_type,
             location,
         )?;
 
@@ -896,7 +922,7 @@ impl Analyzer {
     }
 
     ///
-    /// Evaluates the element, turning it to the state specified with `hint`.
+    /// Evaluates the element, turning it into the state specified with `hint`.
     ///
     fn evaluate(
         scope: Rc<RefCell<Scope>>,
