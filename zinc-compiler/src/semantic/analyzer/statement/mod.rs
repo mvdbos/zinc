@@ -262,22 +262,6 @@ impl Analyzer {
                     )?;
                 }
             }
-
-            // let (identifier, is_mutable) = match argument_binding.variant {
-            //     BindingPatternVariant::Binding(identifier) => (identifier, false),
-            //     BindingPatternVariant::MutableBinding(identifier) => (identifier, true),
-            //     BindingPatternVariant::Wildcard => continue,
-            // };
-            // let identifier_location = identifier.location;
-            // let r#type =
-            //     Type::from_type_variant(&argument_binding.r#type.variant, self.scope_stack.top())?;
-
-            // Scope::declare_variable(
-            //     self.scope_stack.top(),
-            //     identifier,
-            //     ScopeVariableItem::new(is_mutable, r#type),
-            // )
-            // .map_err(|error| Error::Scope(identifier_location, error))?;
         }
 
         let return_expression_location = match statement

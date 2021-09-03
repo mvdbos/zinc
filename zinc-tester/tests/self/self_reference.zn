@@ -20,8 +20,6 @@ impl Foo {
     }
 }
 
-
 fn main(foo: Foo, foo_bar: u32) -> u32 {
-    // foo.baz(foo_bar)
-    foo.bar + foo_bar
+    foo.baz(foo_bar)
 }
