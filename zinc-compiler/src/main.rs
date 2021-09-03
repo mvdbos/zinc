@@ -19,6 +19,7 @@ use structopt::StructOpt;
 use zinc_compiler::Bytecode;
 use zinc_compiler::File as ZincFile;
 use zinc_compiler::Scope;
+use crate::Error::Compiler;
 
 static ZINC_SOURCE_FILE_EXTENSION: &str = "zn";
 
@@ -170,7 +171,7 @@ fn visit(
             let module_path = n.with_file_name(m + ".zn");
             visit(module_path, L, temp_marks)
         })
-        .expect("Compilation failed during module graph ordering");
+        .map_err(|e| Compiler(format!("Compilation failed during module graph ordering:\n{}", e)))?;
 
     //     remove temporary mark from n
     debug!("TEMP MARK - REMOVE: {}", n.display());
@@ -203,7 +204,7 @@ fn ordered_source_files(source_files: Vec<PathBuf>) -> Result<VecDeque<PathBuf>,
         }
 
         visit(source_file_path, &mut L, &mut temp_marks)
-            .expect("Compilation failed during module graph ordering");
+            .map_err(|e| Compiler(format!("Compilation failed during module graph ordering:\n{}", e)))?;
     }
     Ok(L)
 }
@@ -212,7 +213,7 @@ fn main_inner(args: Arguments) -> Result<(), Error> {
     zinc_bytecode::logger::init_logger("znc", args.verbosity);
 
     let ordered_source_files = ordered_source_files(args.source_files)
-        .map_err(|e| Error::Compiler("Could not determine ordered source files: ".to_string()))?;
+        .map_err(|e| Error::Compiler(format!("Could not determine ordered source files:\n{}", e)))?;
 
     ordered_source_files
         .iter()
