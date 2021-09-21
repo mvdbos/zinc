@@ -75,8 +75,8 @@ fn ok_same_function_name_in_different_scopes() {
         }
     }
     
-    fn main(witness: Struct1, a: Struct2) {
-        witness;
+    fn main(struct1: Struct1, struct2: Struct2) {
+        struct1;
     }
 "#;
 
