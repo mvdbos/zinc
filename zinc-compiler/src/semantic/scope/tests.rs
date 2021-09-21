@@ -37,6 +37,53 @@ fn main() {
 }
 
 #[test]
+fn ok_same_function_name_in_different_scopes() {
+    let input = r#"
+    struct Struct1 {
+        value: u32,
+    }
+    
+    impl Struct1 {
+        fn new( value: u32) -> Struct1 {
+            Struct1 {
+                value: value,
+            }
+        }
+    
+        fn empty() -> Struct1 {
+            Struct1 {
+                value: 0 as u32,
+            }
+        }
+    }
+    
+    struct Struct2 {
+        value: u32,
+    }
+    
+    impl Struct2 {
+        fn new( value: u32) -> Struct2 {
+            Struct2 {
+                value: value,
+            }
+        }
+    
+        fn empty() -> Struct2 {
+            Struct2 {
+                value: 0 as u32,
+            }
+        }
+    }
+    
+    fn main(witness: Struct1, a: Struct2) {
+        witness;
+    }
+"#;
+
+    assert!(crate::semantic::tests::compile_entry(input).is_ok());
+}
+
+#[test]
 fn ok_far_scope() {
     let input = r#"
 const VALUE: u8 = 42;

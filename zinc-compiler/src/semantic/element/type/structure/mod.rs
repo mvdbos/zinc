@@ -32,9 +32,9 @@ impl Structure {
         identifier: String,
         unique_id: usize,
         fields: Vec<(String, Type)>,
-        scope: Option<Rc<RefCell<Scope>>>,
+        scope_parent: Option<Rc<RefCell<Scope>>>,
     ) -> Self {
-        let scope = scope.unwrap_or_else(|| Rc::new(RefCell::new(Scope::new(None))));
+        let scope = Rc::new(RefCell::new(Scope::new(scope_parent)));
 
         let structure = Self {
             identifier,
