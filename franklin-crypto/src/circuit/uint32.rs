@@ -654,25 +654,25 @@ mod test {
         }
     }
 
-    #[test]
-    fn test_uint32_shr() {
-        let mut rng = XorShiftRng::from_seed([0x5dbe6259, 0x8d313d76, 0x3237db17, 0xe5bc0654]);
-
-        for _ in 0..50 {
-            for i in 0..60 {
-                let num = rng.gen();
-                let a = UInt32::constant(num).shr(i);
-                let b = UInt32::constant(num >> i);
-
-                assert_eq!(a.value.unwrap(), num >> i);
-
-                assert_eq!(a.bits.len(), b.bits.len());
-                for (a, b) in a.bits.iter().zip(b.bits.iter()) {
-                    assert_eq!(a.get_value().unwrap(), b.get_value().unwrap());
-                }
-            }
-        }
-    }
+    // #[test]
+    // fn test_uint32_shr() {
+    //     let mut rng = XorShiftRng::from_seed([0x5dbe6259, 0x8d313d76, 0x3237db17, 0xe5bc0654]);
+    //
+    //     for _ in 0..50 {
+    //         for i in 0..60 {
+    //             let num = rng.gen();
+    //             let a = UInt32::constant(num).shr(i);
+    //             let b = UInt32::constant(num >> i);
+    //
+    //             assert_eq!(a.value.unwrap(), num >> i);
+    //
+    //             assert_eq!(a.bits.len(), b.bits.len());
+    //             for (a, b) in a.bits.iter().zip(b.bits.iter()) {
+    //                 assert_eq!(a.get_value().unwrap(), b.get_value().unwrap());
+    //             }
+    //         }
+    //     }
+    // }
 
     #[test]
     fn test_uint32_sha256_maj() {

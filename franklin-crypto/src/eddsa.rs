@@ -987,45 +987,45 @@ mod baby_tests {
         }
     }
 
-    #[test]
-    fn random_signatures_for_pedersen_musig() {
-        let rng = &mut thread_rng();
-        let p_g = FixedGenerators::SpendingKeyGenerator;
-        let params = &AltJubjubBn256::new();
-
-        for _ in 0..1000 {
-            let sk = PrivateKey::<Bn256>(rng.gen());
-            let vk = PublicKey::from_private(&sk, p_g, params);
-
-            let msg1 = b"Foo bar";
-            let msg2 = b"Spam eggs";
-
-            let max_message_size: usize = 16;
-
-            let seed1 = Seed::random_seed(rng, msg1);
-            let seed2 = Seed::random_seed(rng, msg2);
-
-            let sig1 = sk.musig_pedersen_sign(msg1, &seed1, p_g, params);
-            let sig2 = sk.musig_pedersen_sign(msg2, &seed2, p_g, params);
-
-            assert!(vk.verify_musig_pedersen(msg1, &sig1, p_g, params));
-            assert!(vk.verify_musig_pedersen(msg2, &sig2, p_g, params));
-            assert!(!vk.verify_musig_pedersen(msg1, &sig2, p_g, params));
-            assert!(!vk.verify_musig_pedersen(msg2, &sig1, p_g, params));
-
-            let alpha = rng.gen();
-            let rsk = sk.randomize(alpha);
-            let rvk = vk.randomize(alpha, p_g, params);
-
-            let sig1 = sk.musig_pedersen_sign(msg1, &seed1, p_g, params);
-            let sig2 = sk.musig_pedersen_sign(msg2, &seed2, p_g, params);
-
-            assert!(rvk.verify_musig_pedersen(msg1, &sig1, p_g, params));
-            assert!(rvk.verify_musig_pedersen(msg2, &sig2, p_g, params));
-            assert!(!rvk.verify_musig_pedersen(msg1, &sig2, p_g, params));
-            assert!(!rvk.verify_musig_pedersen(msg2, &sig1, p_g, params));
-        }
-    }
+    // #[test]
+    // fn random_signatures_for_pedersen_musig() {
+    //     let rng = &mut thread_rng();
+    //     let p_g = FixedGenerators::SpendingKeyGenerator;
+    //     let params = &AltJubjubBn256::new();
+    //
+    //     for _ in 0..1000 {
+    //         let sk = PrivateKey::<Bn256>(rng.gen());
+    //         let vk = PublicKey::from_private(&sk, p_g, params);
+    //
+    //         let msg1 = b"Foo bar";
+    //         let msg2 = b"Spam eggs";
+    //
+    //         let max_message_size: usize = 16;
+    //
+    //         let seed1 = Seed::random_seed(rng, msg1);
+    //         let seed2 = Seed::random_seed(rng, msg2);
+    //
+    //         let sig1 = sk.musig_pedersen_sign(msg1, &seed1, p_g, params);
+    //         let sig2 = sk.musig_pedersen_sign(msg2, &seed2, p_g, params);
+    //
+    //         assert!(vk.verify_musig_pedersen(msg1, &sig1, p_g, params));
+    //         assert!(vk.verify_musig_pedersen(msg2, &sig2, p_g, params));
+    //         assert!(!vk.verify_musig_pedersen(msg1, &sig2, p_g, params));
+    //         assert!(!vk.verify_musig_pedersen(msg2, &sig1, p_g, params));
+    //
+    //         let alpha = rng.gen();
+    //         let rsk = sk.randomize(alpha);
+    //         let rvk = vk.randomize(alpha, p_g, params);
+    //
+    //         let sig1 = sk.musig_pedersen_sign(msg1, &seed1, p_g, params);
+    //         let sig2 = sk.musig_pedersen_sign(msg2, &seed2, p_g, params);
+    //
+    //         assert!(rvk.verify_musig_pedersen(msg1, &sig1, p_g, params));
+    //         assert!(rvk.verify_musig_pedersen(msg2, &sig2, p_g, params));
+    //         assert!(!rvk.verify_musig_pedersen(msg1, &sig2, p_g, params));
+    //         assert!(!rvk.verify_musig_pedersen(msg2, &sig1, p_g, params));
+    //     }
+    // }
 
     #[test]
     fn get_generator_for_signatures() {

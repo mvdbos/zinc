@@ -666,28 +666,28 @@ mod test {
         }
     }
 
-    #[test]
-    fn test_expr_conditional_select() {
-        let mut rng = XorShiftRng::from_seed([0x3dbe6259, 0x8d313d76, 0x3237db17, 0xe5bc0654]);
-        {
-            let mut cs = TestConstraintSystem::<Bls12>::new();
-
-            let a = AllocatedNum::alloc(cs.namespace(|| "a"), || Ok(rng.gen())).unwrap();
-            let b = AllocatedNum::alloc(cs.namespace(|| "b"), || Ok(rng.gen())).unwrap();
-
-            let condition_true = Boolean::constant(true);
-            let c = Expression::conditionally_select(cs.namespace(|| "c"), &a, &b, &condition_true).unwrap();
-
-            let condition_false = Boolean::constant(false);
-            let d = Expression::conditionally_select(cs.namespace(|| "d"), &a, &b, &condition_false).unwrap();
-
-            assert!(cs.is_satisfied());
-            assert!(cs.num_constraints() == 2);
-
-            assert_eq!(a.get_value().unwrap(), c.get_value().unwrap());
-            assert_eq!(b.get_value().unwrap(), d.get_value().unwrap());
-        }
-    }
+    // #[test]
+    // fn test_expr_conditional_select() {
+    //     let mut rng = XorShiftRng::from_seed([0x3dbe6259, 0x8d313d76, 0x3237db17, 0xe5bc0654]);
+    //     {
+    //         let mut cs = TestConstraintSystem::<Bls12>::new();
+    //
+    //         let a = AllocatedNum::alloc(cs.namespace(|| "a"), || Ok(rng.gen())).unwrap();
+    //         let b = AllocatedNum::alloc(cs.namespace(|| "b"), || Ok(rng.gen())).unwrap();
+    //
+    //         let condition_true = Boolean::constant(true);
+    //         let c = Expression::conditionally_select(cs.namespace(|| "c"), &a, &b, &condition_true).unwrap();
+    //
+    //         let condition_false = Boolean::constant(false);
+    //         let d = Expression::conditionally_select(cs.namespace(|| "d"), &a, &b, &condition_false).unwrap();
+    //
+    //         assert!(cs.is_satisfied());
+    //         assert!(cs.num_constraints() == 2);
+    //
+    //         assert_eq!(a.get_value().unwrap(), c.get_value().unwrap());
+    //         assert_eq!(b.get_value().unwrap(), d.get_value().unwrap());
+    //     }
+    // }
 
     #[test]
     fn select_if_equals() {

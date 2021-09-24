@@ -841,16 +841,16 @@ fn test_fs_repr_sub_noborrow() {
     }
 }
 
-#[test]
-fn test_fs_legendre() {
-    assert_eq!(QuadraticResidue, Fs::one().legendre());
-    assert_eq!(Zero, Fs::zero().legendre());
-
-    let e = FsRepr([0x8385eec23df1f88e, 0x9a01fb412b2dba16, 0x4c928edcdd6c22f, 0x9f2df7ef69ecef9]);
-    assert_eq!(QuadraticResidue, Fs::from_repr(e).unwrap().legendre());
-    let e = FsRepr([0xe8ed9f299da78568, 0x35efdebc88b2209, 0xc82125cb1f916dbe, 0x6813d2b38c39bd0]);
-    assert_eq!(QuadraticNonResidue, Fs::from_repr(e).unwrap().legendre());
-}
+// #[test]
+// fn test_fs_legendre() {
+//     assert_eq!(QuadraticResidue, Fs::one().legendre());
+//     assert_eq!(Zero, Fs::zero().legendre());
+//
+//     let e = FsRepr([0x8385eec23df1f88e, 0x9a01fb412b2dba16, 0x4c928edcdd6c22f, 0x9f2df7ef69ecef9]);
+//     assert_eq!(QuadraticResidue, Fs::from_repr(e).unwrap().legendre());
+//     let e = FsRepr([0xe8ed9f299da78568, 0x35efdebc88b2209, 0xc82125cb1f916dbe, 0x6813d2b38c39bd0]);
+//     assert_eq!(QuadraticNonResidue, Fs::from_repr(e).unwrap().legendre());
+// }
 
 #[test]
 fn test_fr_repr_add_nocarry() {
@@ -1163,70 +1163,70 @@ fn test_fs_pow() {
     }
 }
 
-#[test]
-fn test_fs_sqrt() {
-    let mut rng = XorShiftRng::from_seed([0x5dbe6259, 0x8d313d76, 0x3237db17, 0xe5bc0654]);
+// #[test]
+// fn test_fs_sqrt() {
+//     let mut rng = XorShiftRng::from_seed([0x5dbe6259, 0x8d313d76, 0x3237db17, 0xe5bc0654]);
+//
+//     assert_eq!(Fs::zero().sqrt().unwrap(), Fs::zero());
+//
+//     for _ in 0..1000 {
+//         // Ensure sqrt(a^2) = a or -a
+//         let a = Fs::rand(&mut rng);
+//         let mut nega = a;
+//         nega.negate();
+//         let mut b = a;
+//         b.square();
+//
+//         let b = b.sqrt().unwrap();
+//
+//         assert!(a == b || nega == b);
+//     }
+//
+//     for _ in 0..1000 {
+//         // Ensure sqrt(a)^2 = a for random a
+//         let a = Fs::rand(&mut rng);
+//
+//         if let Some(mut tmp) = a.sqrt() {
+//             tmp.square();
+//
+//             assert_eq!(a, tmp);
+//         }
+//     }
+// }
 
-    assert_eq!(Fs::zero().sqrt().unwrap(), Fs::zero());
-
-    for _ in 0..1000 {
-        // Ensure sqrt(a^2) = a or -a
-        let a = Fs::rand(&mut rng);
-        let mut nega = a;
-        nega.negate();
-        let mut b = a;
-        b.square();
-
-        let b = b.sqrt().unwrap();
-
-        assert!(a == b || nega == b);
-    }
-
-    for _ in 0..1000 {
-        // Ensure sqrt(a)^2 = a for random a
-        let a = Fs::rand(&mut rng);
-
-        if let Some(mut tmp) = a.sqrt() {
-            tmp.square();
-
-            assert_eq!(a, tmp);
-        }
-    }
-}
-
-#[test]
-fn test_fs_from_into_repr() {
-    // r + 1 should not be in the field
-    assert!(Fs::from_repr(FsRepr([0xd0970e5ed6f72cb8, 0xa6682093ccc81082, 0x6673b0101343b00, 0xe7db4ea6533afa9])).is_err());
-
-    // r should not be in the field
-    assert!(Fs::from_repr(Fs::char()).is_err());
-
-    // Multiply some arbitrary representations to see if the result is as expected.
-    let a = FsRepr([0x5f2d0c05d0337b71, 0xa1df2b0f8a20479, 0xad73785e71bb863, 0x504a00480c9acec]);
-    let mut a_fs = Fs::from_repr(a).unwrap();
-    let b = FsRepr([0x66356ff51e477562, 0x60a92ab55cf7603, 0x8e4273c7364dd192, 0x36df8844a344dc5]);
-    let b_fs = Fs::from_repr(b).unwrap();
-    let c = FsRepr([0x7eef61708f4f2868, 0x747a7e6cf52946fb, 0x83dd75d7c9120017, 0x762f5177f0f3df7]);
-    a_fs.mul_assign(&b_fs);
-    assert_eq!(a_fs.into_repr(), c);
-
-    // Zero should be in the field.
-    assert!(Fs::from_repr(FsRepr::from(0)).unwrap().is_zero());
-
-    let mut rng = XorShiftRng::from_seed([0x5dbe6259, 0x8d313d76, 0x3237db17, 0xe5bc0654]);
-
-    for _ in 0..1000 {
-        // Try to turn Fs elements into representations and back again, and compare.
-        let a = Fs::rand(&mut rng);
-        let a_repr = a.into_repr();
-        let b_repr = FsRepr::from(a);
-        assert_eq!(a_repr, b_repr);
-        let a_again = Fs::from_repr(a_repr).unwrap();
-
-        assert_eq!(a, a_again);
-    }
-}
+// #[test]
+// fn test_fs_from_into_repr() {
+//     // r + 1 should not be in the field
+//     assert!(Fs::from_repr(FsRepr([0xd0970e5ed6f72cb8, 0xa6682093ccc81082, 0x6673b0101343b00, 0xe7db4ea6533afa9])).is_err());
+//
+//     // r should not be in the field
+//     assert!(Fs::from_repr(Fs::char()).is_err());
+//
+//     // Multiply some arbitrary representations to see if the result is as expected.
+//     let a = FsRepr([0x5f2d0c05d0337b71, 0xa1df2b0f8a20479, 0xad73785e71bb863, 0x504a00480c9acec]);
+//     let mut a_fs = Fs::from_repr(a).unwrap();
+//     let b = FsRepr([0x66356ff51e477562, 0x60a92ab55cf7603, 0x8e4273c7364dd192, 0x36df8844a344dc5]);
+//     let b_fs = Fs::from_repr(b).unwrap();
+//     let c = FsRepr([0x7eef61708f4f2868, 0x747a7e6cf52946fb, 0x83dd75d7c9120017, 0x762f5177f0f3df7]);
+//     a_fs.mul_assign(&b_fs);
+//     assert_eq!(a_fs.into_repr(), c);
+//
+//     // Zero should be in the field.
+//     assert!(Fs::from_repr(FsRepr::from(0)).unwrap().is_zero());
+//
+//     let mut rng = XorShiftRng::from_seed([0x5dbe6259, 0x8d313d76, 0x3237db17, 0xe5bc0654]);
+//
+//     for _ in 0..1000 {
+//         // Try to turn Fs elements into representations and back again, and compare.
+//         let a = Fs::rand(&mut rng);
+//         let a_repr = a.into_repr();
+//         let b_repr = FsRepr::from(a);
+//         assert_eq!(a_repr, b_repr);
+//         let a_again = Fs::from_repr(a_repr).unwrap();
+//
+//         assert_eq!(a, a_again);
+//     }
+// }
 
 #[test]
 fn test_fs_repr_display() {
@@ -1248,17 +1248,17 @@ fn test_fs_repr_display() {
     );
 }
 
-#[test]
-fn test_fs_display() {
-    assert_eq!(
-        format!("{}", Fs::from_repr(FsRepr([0x5528efb9998a01a3, 0x5bd2add5cb357089, 0xc061fa6adb491f98, 0x70db9d143db03d9])).unwrap()),
-        "Fs(0x070db9d143db03d9c061fa6adb491f985bd2add5cb3570895528efb9998a01a3)".to_string()
-    );
-    assert_eq!(
-        format!("{}", Fs::from_repr(FsRepr([0xd674745e2717999e, 0xbeb1f52d3e96f338, 0x9c7ae147549482b9, 0x999706024530d22])).unwrap()),
-        "Fs(0x0999706024530d229c7ae147549482b9beb1f52d3e96f338d674745e2717999e)".to_string()
-    );
-}
+// #[test]
+// fn test_fs_display() {
+//     assert_eq!(
+//         format!("{}", Fs::from_repr(FsRepr([0x5528efb9998a01a3, 0x5bd2add5cb357089, 0xc061fa6adb491f98, 0x70db9d143db03d9])).unwrap()),
+//         "Fs(0x070db9d143db03d9c061fa6adb491f985bd2add5cb3570895528efb9998a01a3)".to_string()
+//     );
+//     assert_eq!(
+//         format!("{}", Fs::from_repr(FsRepr([0xd674745e2717999e, 0xbeb1f52d3e96f338, 0x9c7ae147549482b9, 0x999706024530d22])).unwrap()),
+//         "Fs(0x0999706024530d229c7ae147549482b9beb1f52d3e96f338d674745e2717999e)".to_string()
+//     );
+// }
 
 #[test]
 fn test_fs_num_bits() {

@@ -602,218 +602,218 @@ impl<'a, E: JubjubEngine> Circuit<E> for Output<'a, E> {
     }
 }
 
-#[test]
-fn test_input_circuit_with_bls12_381() {
-    use bellman::pairing::ff::{Field, BitIterator};
-    use bellman::pairing::bls12_381::*;
-    use rand::{SeedableRng, Rng, XorShiftRng};
-    use ::circuit::test::*;
-    use jubjub::{JubjubBls12, fs, edwards};
+// #[test]
+// fn test_input_circuit_with_bls12_381() {
+//     use bellman::pairing::ff::{Field, BitIterator};
+//     use bellman::pairing::bls12_381::*;
+//     use rand::{SeedableRng, Rng, XorShiftRng};
+//     use ::circuit::test::*;
+//     use jubjub::{JubjubBls12, fs, edwards};
+//
+//     let params = &JubjubBls12::new();
+//     let rng = &mut XorShiftRng::from_seed([0x3dbe6259, 0x8d313d76, 0x3237db17, 0xe5bc0654]);
+//
+//     let tree_depth = 32;
+//
+//     for _ in 0..10 {
+//         let value_commitment = ValueCommitment {
+//             value: rng.gen(),
+//             randomness: rng.gen()
+//         };
+//
+//         let nsk: fs::Fs = rng.gen();
+//         let ak = edwards::Point::rand(rng, params).mul_by_cofactor(params);
+//
+//         let proof_generation_key = ::primitives::ProofGenerationKey {
+//             ak: ak.clone(),
+//             nsk: nsk.clone()
+//         };
+//
+//         let viewing_key = proof_generation_key.into_viewing_key(params);
+//
+//         let payment_address;
+//
+//         loop {
+//             let diversifier = ::primitives::Diversifier(rng.gen());
+//
+//             if let Some(p) = viewing_key.into_payment_address(
+//                 diversifier,
+//                 params
+//             )
+//             {
+//                 payment_address = p;
+//                 break;
+//             }
+//         }
+//
+//         let g_d = payment_address.diversifier.g_d(params).unwrap();
+//         let commitment_randomness: fs::Fs = rng.gen();
+//         let auth_path = vec![Some((rng.gen(), rng.gen())); tree_depth];
+//         let ar: fs::Fs = rng.gen();
+//
+//         {
+//             let rk = viewing_key.rk(ar, params).into_xy();
+//             let expected_value_cm = value_commitment.cm(params).into_xy();
+//             let note = ::primitives::Note {
+//                 value: value_commitment.value,
+//                 g_d: g_d.clone(),
+//                 pk_d: payment_address.pk_d.clone(),
+//                 r: commitment_randomness.clone()
+//             };
+//
+//             let mut position = 0u64;
+//             let cm: Fr = note.cm(params);
+//             let mut cur = cm.clone();
+//
+//             for (i, val) in auth_path.clone().into_iter().enumerate()
+//             {
+//                 let (uncle, b) = val.unwrap();
+//
+//                 let mut lhs = cur;
+//                 let mut rhs = uncle;
+//
+//                 if b {
+//                     ::std::mem::swap(&mut lhs, &mut rhs);
+//                 }
+//
+//                 let mut lhs: Vec<bool> = BitIterator::new(lhs.into_repr()).collect();
+//                 let mut rhs: Vec<bool> = BitIterator::new(rhs.into_repr()).collect();
+//
+//                 lhs.reverse();
+//                 rhs.reverse();
+//
+//                 cur = ::pedersen_hash::pedersen_hash::<Bls12, _>(
+//                     ::pedersen_hash::Personalization::MerkleTree(i),
+//                     lhs.into_iter()
+//                        .take(Fr::NUM_BITS as usize)
+//                        .chain(rhs.into_iter().take(Fr::NUM_BITS as usize)),
+//                     params
+//                 ).into_xy().0;
+//
+//                 if b {
+//                     position |= 1 << i;
+//                 }
+//             }
+//
+//             let expected_nf = note.nf(&viewing_key, position, params);
+//             let expected_nf = multipack::bytes_to_bits_le(&expected_nf);
+//             let expected_nf = multipack::compute_multipacking::<Bls12>(&expected_nf);
+//             assert_eq!(expected_nf.len(), 2);
+//
+//             let mut cs = TestConstraintSystem::<Bls12>::new();
+//
+//             let instance = Spend {
+//                 params: params,
+//                 value_commitment: Some(value_commitment.clone()),
+//                 proof_generation_key: Some(proof_generation_key.clone()),
+//                 payment_address: Some(payment_address.clone()),
+//                 commitment_randomness: Some(commitment_randomness),
+//                 ar: Some(ar),
+//                 auth_path: auth_path.clone(),
+//                 anchor: Some(cur)
+//             };
+//
+//             instance.synthesize(&mut cs).unwrap();
+//
+//             assert!(cs.is_satisfied());
+//             assert_eq!(cs.num_constraints(), 98777);
+//             assert_eq!(cs.hash(), "d37c738e83df5d9b0bb6495ac96abf21bcb2697477e2c15c2c7916ff7a3b6a89");
+//
+//             assert_eq!(cs.get("randomization of note commitment/x3/num"), cm);
+//
+//             assert_eq!(cs.num_inputs(), 8);
+//             assert_eq!(cs.get_input(0, "ONE"), Fr::one());
+//             assert_eq!(cs.get_input(1, "rk/x/input variable"), rk.0);
+//             assert_eq!(cs.get_input(2, "rk/y/input variable"), rk.1);
+//             assert_eq!(cs.get_input(3, "value commitment/commitment point/x/input variable"), expected_value_cm.0);
+//             assert_eq!(cs.get_input(4, "value commitment/commitment point/y/input variable"), expected_value_cm.1);
+//             assert_eq!(cs.get_input(5, "anchor/input variable"), cur);
+//             assert_eq!(cs.get_input(6, "pack nullifier/input 0"), expected_nf[0]);
+//             assert_eq!(cs.get_input(7, "pack nullifier/input 1"), expected_nf[1]);
+//         }
+//     }
+// }
 
-    let params = &JubjubBls12::new();
-    let rng = &mut XorShiftRng::from_seed([0x3dbe6259, 0x8d313d76, 0x3237db17, 0xe5bc0654]);
-
-    let tree_depth = 32;
-
-    for _ in 0..10 {
-        let value_commitment = ValueCommitment {
-            value: rng.gen(),
-            randomness: rng.gen()
-        };
-
-        let nsk: fs::Fs = rng.gen();
-        let ak = edwards::Point::rand(rng, params).mul_by_cofactor(params);
-
-        let proof_generation_key = ::primitives::ProofGenerationKey {
-            ak: ak.clone(),
-            nsk: nsk.clone()
-        };
-
-        let viewing_key = proof_generation_key.into_viewing_key(params);
-
-        let payment_address;
-
-        loop {
-            let diversifier = ::primitives::Diversifier(rng.gen());
-
-            if let Some(p) = viewing_key.into_payment_address(
-                diversifier,
-                params
-            )
-            {
-                payment_address = p;
-                break;
-            }
-        }
-
-        let g_d = payment_address.diversifier.g_d(params).unwrap();
-        let commitment_randomness: fs::Fs = rng.gen();
-        let auth_path = vec![Some((rng.gen(), rng.gen())); tree_depth];
-        let ar: fs::Fs = rng.gen();
-
-        {
-            let rk = viewing_key.rk(ar, params).into_xy();
-            let expected_value_cm = value_commitment.cm(params).into_xy();
-            let note = ::primitives::Note {
-                value: value_commitment.value,
-                g_d: g_d.clone(),
-                pk_d: payment_address.pk_d.clone(),
-                r: commitment_randomness.clone()
-            };
-
-            let mut position = 0u64;
-            let cm: Fr = note.cm(params);
-            let mut cur = cm.clone();
-
-            for (i, val) in auth_path.clone().into_iter().enumerate()
-            {
-                let (uncle, b) = val.unwrap();
-
-                let mut lhs = cur;
-                let mut rhs = uncle;
-
-                if b {
-                    ::std::mem::swap(&mut lhs, &mut rhs);
-                }
-
-                let mut lhs: Vec<bool> = BitIterator::new(lhs.into_repr()).collect();
-                let mut rhs: Vec<bool> = BitIterator::new(rhs.into_repr()).collect();
-
-                lhs.reverse();
-                rhs.reverse();
-
-                cur = ::pedersen_hash::pedersen_hash::<Bls12, _>(
-                    ::pedersen_hash::Personalization::MerkleTree(i),
-                    lhs.into_iter()
-                       .take(Fr::NUM_BITS as usize)
-                       .chain(rhs.into_iter().take(Fr::NUM_BITS as usize)),
-                    params
-                ).into_xy().0;
-
-                if b {
-                    position |= 1 << i;
-                }
-            }
-
-            let expected_nf = note.nf(&viewing_key, position, params);
-            let expected_nf = multipack::bytes_to_bits_le(&expected_nf);
-            let expected_nf = multipack::compute_multipacking::<Bls12>(&expected_nf);
-            assert_eq!(expected_nf.len(), 2);
-
-            let mut cs = TestConstraintSystem::<Bls12>::new();
-
-            let instance = Spend {
-                params: params,
-                value_commitment: Some(value_commitment.clone()),
-                proof_generation_key: Some(proof_generation_key.clone()),
-                payment_address: Some(payment_address.clone()),
-                commitment_randomness: Some(commitment_randomness),
-                ar: Some(ar),
-                auth_path: auth_path.clone(),
-                anchor: Some(cur)
-            };
-
-            instance.synthesize(&mut cs).unwrap();
-
-            assert!(cs.is_satisfied());
-            assert_eq!(cs.num_constraints(), 98777);
-            assert_eq!(cs.hash(), "d37c738e83df5d9b0bb6495ac96abf21bcb2697477e2c15c2c7916ff7a3b6a89");
-
-            assert_eq!(cs.get("randomization of note commitment/x3/num"), cm);
-
-            assert_eq!(cs.num_inputs(), 8);
-            assert_eq!(cs.get_input(0, "ONE"), Fr::one());
-            assert_eq!(cs.get_input(1, "rk/x/input variable"), rk.0);
-            assert_eq!(cs.get_input(2, "rk/y/input variable"), rk.1);
-            assert_eq!(cs.get_input(3, "value commitment/commitment point/x/input variable"), expected_value_cm.0);
-            assert_eq!(cs.get_input(4, "value commitment/commitment point/y/input variable"), expected_value_cm.1);
-            assert_eq!(cs.get_input(5, "anchor/input variable"), cur);
-            assert_eq!(cs.get_input(6, "pack nullifier/input 0"), expected_nf[0]);
-            assert_eq!(cs.get_input(7, "pack nullifier/input 1"), expected_nf[1]);
-        }
-    }
-}
-
-#[test]
-fn test_output_circuit_with_bls12_381() {
-    use bellman::pairing::ff::{Field};
-    use bellman::pairing::bls12_381::*;
-    use rand::{SeedableRng, Rng, XorShiftRng};
-    use ::circuit::test::*;
-    use jubjub::{JubjubBls12, fs, edwards};
-
-    let params = &JubjubBls12::new();
-    let rng = &mut XorShiftRng::from_seed([0x3dbe6258, 0x8d313d76, 0x3237db17, 0xe5bc0654]);
-
-    for _ in 0..100 {
-        let value_commitment = ValueCommitment {
-            value: rng.gen(),
-            randomness: rng.gen()
-        };
-
-        let nsk: fs::Fs = rng.gen();
-        let ak = edwards::Point::rand(rng, params).mul_by_cofactor(params);
-
-        let proof_generation_key = ::primitives::ProofGenerationKey {
-            ak: ak.clone(),
-            nsk: nsk.clone()
-        };
-
-        let viewing_key = proof_generation_key.into_viewing_key(params);
-
-        let payment_address;
-
-        loop {
-            let diversifier = ::primitives::Diversifier(rng.gen());
-
-            if let Some(p) = viewing_key.into_payment_address(
-                diversifier,
-                params
-            )
-            {
-                payment_address = p;
-                break;
-            }
-        }
-
-        let commitment_randomness: fs::Fs = rng.gen();
-        let esk: fs::Fs = rng.gen();
-
-        {
-            let mut cs = TestConstraintSystem::<Bls12>::new();
-
-            let instance = Output {
-                params: params,
-                value_commitment: Some(value_commitment.clone()),
-                payment_address: Some(payment_address.clone()),
-                commitment_randomness: Some(commitment_randomness),
-                esk: Some(esk.clone())
-            };
-
-            instance.synthesize(&mut cs).unwrap();
-
-            assert!(cs.is_satisfied());
-            assert_eq!(cs.num_constraints(), 7827);
-            assert_eq!(cs.hash(), "c26d5cdfe6ccd65c03390902c02e11393ea6bb96aae32a7f2ecb12eb9103faee");
-
-            let expected_cm = payment_address.create_note(
-                value_commitment.value,
-                commitment_randomness,
-                params
-            ).expect("should be valid").cm(params);
-
-            let expected_value_cm = value_commitment.cm(params).into_xy();
-
-            let expected_epk = payment_address.g_d(params).expect("should be valid").mul(esk, params);
-            let expected_epk_xy = expected_epk.into_xy();
-
-            assert_eq!(cs.num_inputs(), 6);
-            assert_eq!(cs.get_input(0, "ONE"), Fr::one());
-            assert_eq!(cs.get_input(1, "value commitment/commitment point/x/input variable"), expected_value_cm.0);
-            assert_eq!(cs.get_input(2, "value commitment/commitment point/y/input variable"), expected_value_cm.1);
-            assert_eq!(cs.get_input(3, "epk/x/input variable"), expected_epk_xy.0);
-            assert_eq!(cs.get_input(4, "epk/y/input variable"), expected_epk_xy.1);
-            assert_eq!(cs.get_input(5, "commitment/input variable"), expected_cm);
-        }
-    }
-}
+// #[test]
+// fn test_output_circuit_with_bls12_381() {
+//     use bellman::pairing::ff::{Field};
+//     use bellman::pairing::bls12_381::*;
+//     use rand::{SeedableRng, Rng, XorShiftRng};
+//     use ::circuit::test::*;
+//     use jubjub::{JubjubBls12, fs, edwards};
+//
+//     let params = &JubjubBls12::new();
+//     let rng = &mut XorShiftRng::from_seed([0x3dbe6258, 0x8d313d76, 0x3237db17, 0xe5bc0654]);
+//
+//     for _ in 0..100 {
+//         let value_commitment = ValueCommitment {
+//             value: rng.gen(),
+//             randomness: rng.gen()
+//         };
+//
+//         let nsk: fs::Fs = rng.gen();
+//         let ak = edwards::Point::rand(rng, params).mul_by_cofactor(params);
+//
+//         let proof_generation_key = ::primitives::ProofGenerationKey {
+//             ak: ak.clone(),
+//             nsk: nsk.clone()
+//         };
+//
+//         let viewing_key = proof_generation_key.into_viewing_key(params);
+//
+//         let payment_address;
+//
+//         loop {
+//             let diversifier = ::primitives::Diversifier(rng.gen());
+//
+//             if let Some(p) = viewing_key.into_payment_address(
+//                 diversifier,
+//                 params
+//             )
+//             {
+//                 payment_address = p;
+//                 break;
+//             }
+//         }
+//
+//         let commitment_randomness: fs::Fs = rng.gen();
+//         let esk: fs::Fs = rng.gen();
+//
+//         {
+//             let mut cs = TestConstraintSystem::<Bls12>::new();
+//
+//             let instance = Output {
+//                 params: params,
+//                 value_commitment: Some(value_commitment.clone()),
+//                 payment_address: Some(payment_address.clone()),
+//                 commitment_randomness: Some(commitment_randomness),
+//                 esk: Some(esk.clone())
+//             };
+//
+//             instance.synthesize(&mut cs).unwrap();
+//
+//             assert!(cs.is_satisfied());
+//             assert_eq!(cs.num_constraints(), 7827);
+//             assert_eq!(cs.hash(), "c26d5cdfe6ccd65c03390902c02e11393ea6bb96aae32a7f2ecb12eb9103faee");
+//
+//             let expected_cm = payment_address.create_note(
+//                 value_commitment.value,
+//                 commitment_randomness,
+//                 params
+//             ).expect("should be valid").cm(params);
+//
+//             let expected_value_cm = value_commitment.cm(params).into_xy();
+//
+//             let expected_epk = payment_address.g_d(params).expect("should be valid").mul(esk, params);
+//             let expected_epk_xy = expected_epk.into_xy();
+//
+//             assert_eq!(cs.num_inputs(), 6);
+//             assert_eq!(cs.get_input(0, "ONE"), Fr::one());
+//             assert_eq!(cs.get_input(1, "value commitment/commitment point/x/input variable"), expected_value_cm.0);
+//             assert_eq!(cs.get_input(2, "value commitment/commitment point/y/input variable"), expected_value_cm.1);
+//             assert_eq!(cs.get_input(3, "epk/x/input variable"), expected_epk_xy.0);
+//             assert_eq!(cs.get_input(4, "epk/y/input variable"), expected_epk_xy.1);
+//             assert_eq!(cs.get_input(5, "commitment/input variable"), expected_cm);
+//         }
+//     }
+// }

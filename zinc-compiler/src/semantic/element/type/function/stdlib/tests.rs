@@ -250,7 +250,7 @@ fn main() {
 fn error_crypto_pedersen_argument_1_preimage_expected_bit_array_size_limit() {
     let input = r#"
 fn main() {
-    std::crypto::pedersen([true; 513]);
+    std::crypto::pedersen([true; 10485761]);
 }
 "#;
 
@@ -429,7 +429,7 @@ fn main() {
 fn error_crypto_pedersen_multi_input_argument_1_preimage_expected_bit_array_size_limit() {
     let input = r#"
 fn main() {
-    std::crypto::pedersen_multi_input([true; 513], [true; 8]);
+    std::crypto::pedersen_multi_input([true; 10485761], [true; 8]);
 }
 "#;
 
@@ -456,7 +456,7 @@ fn main() {
 fn error_crypto_pedersen_multi_input_argument_2_preimage_expected_bit_array_size_limit() {
     let input = r#"
 fn main() {
-    std::crypto::pedersen_multi_input([true; 8], [true; 513]);
+    std::crypto::pedersen_multi_input([true; 8], [true; 10485761]);
 }
 "#;
 
