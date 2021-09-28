@@ -1,0 +1,22 @@
+//# { "cases": [ {
+//#     "case": "default",
+//#     "input": {
+//#     },
+//#     "expect": "0x15d6db5dbafde718656152279c3fd310087935332834f07aad407eb5f1ada62d"
+//# } ] }
+
+const preimage_len: u32 = 5;
+const BITS: u32 = 254;
+
+fn main() -> field {
+    let preimage: field = 42;
+    let preimage_bits = std::convert::to_bits(preimage);
+    let mut preimage_bits_concatenated = [false; preimage_len * BITS];
+    for i in 0..preimage_len {
+        for j in 0..BITS {
+            preimage_bits_concatenated[i*BITS + j] = preimage_bits[j];
+        }
+    }
+
+    std::crypto::pedersen(preimage_bits_concatenated).0
+}

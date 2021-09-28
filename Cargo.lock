@@ -393,13 +393,13 @@ dependencies = [
 [[package]]
 name = "franklin-crypto"
 version = "0.0.5"
-source = "git+https://github.com/matter-labs/franklin-crypto.git?branch=zinc#82557a6bbae876a62451e98ec5e84f93c2763e09"
 dependencies = [
  "bellman_ce",
  "bit-vec 0.6.1",
  "blake2-rfc_bellman_edition",
  "byteorder",
  "digest 0.7.6",
+ "hex-literal",
  "hmac",
  "rand",
  "serde",
@@ -477,6 +477,25 @@ name = "hex"
 version = "0.4.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "644f9158b2f133fd50f5fb3242878846d9eb792e445c893805ff0e3824006e35"
+
+[[package]]
+name = "hex-literal"
+version = "0.1.4"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "ddc2928beef125e519d69ae1baa8c37ea2e0d3848545217f6db0179c5eb1d639"
+dependencies = [
+ "hex-literal-impl",
+ "proc-macro-hack",
+]
+
+[[package]]
+name = "hex-literal-impl"
+version = "0.1.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "520870c3213943eb8d7803e80180d12a6c7ceb4ae74602544529d1643dc4ddda"
+dependencies = [
+ "proc-macro-hack",
+]
 
 [[package]]
 name = "hmac"
@@ -649,6 +668,21 @@ dependencies = [
 ]
 
 [[package]]
+name = "proc-macro-hack"
+version = "0.4.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "d7f95648580798cc44ff8efb9bb0d7ee5205ea32e087b31b0732f3e8c2648ee2"
+dependencies = [
+ "proc-macro-hack-impl",
+]
+
+[[package]]
+name = "proc-macro-hack-impl"
+version = "0.4.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "7be55bf0ae1635f4d7c7ddd6efc05c631e98a82104a73d35550bbc52db960027"
+
+[[package]]
 name = "proc-macro2"
 version = "0.4.30"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -789,7 +823,7 @@ checksum = "535622e6be132bccd223f4bb2b8ac8d53cda3c7a6394944d3b2b33fb974f9d76"
 
 [[package]]
 name = "schnorr"
-version = "0.1.5-ING-10"
+version = "0.1.5-ING-11"
 dependencies = [
  "colored",
  "env_logger",
@@ -1076,7 +1110,7 @@ checksum = "712e227841d057c1ee1cd2fb22fa7e5a5461ae8e48fa2ca79ec42cfc1931183f"
 
 [[package]]
 name = "zargo"
-version = "0.1.5-ING-10"
+version = "0.1.5-ING-11"
 dependencies = [
  "env_logger",
  "failure",
@@ -1090,7 +1124,7 @@ dependencies = [
 
 [[package]]
 name = "zinc-bytecode"
-version = "0.1.5-ING-10"
+version = "0.1.5-ING-11"
 dependencies = [
  "bincode",
  "colored",
@@ -1109,7 +1143,7 @@ dependencies = [
 
 [[package]]
 name = "zinc-compiler"
-version = "0.1.5-ING-10"
+version = "0.1.5-ING-11"
 dependencies = [
  "colored",
  "env_logger",
@@ -1126,7 +1160,7 @@ dependencies = [
 
 [[package]]
 name = "zinc-tester"
-version = "0.1.5-ING-10"
+version = "0.1.5-ING-11"
 dependencies = [
  "colored",
  "failure",
@@ -1143,7 +1177,7 @@ dependencies = [
 
 [[package]]
 name = "zinc-utils"
-version = "0.1.5-ING-10"
+version = "0.1.5-ING-11"
 dependencies = [
  "num-bigint",
  "num-traits 0.2.11",
@@ -1151,7 +1185,7 @@ dependencies = [
 
 [[package]]
 name = "zinc-vm"
-version = "0.1.5-ING-10"
+version = "0.1.5-ING-11"
 dependencies = [
  "bellman_ce",
  "clap",
