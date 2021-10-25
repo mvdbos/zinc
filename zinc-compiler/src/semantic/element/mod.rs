@@ -1209,11 +1209,11 @@ impl Element {
                                 FieldAccessVariant::Method(Self::Place(place)),
                             )),
                             _ => place
-                    .field_structure(identifier.name)
+                                .field_structure(identifier.name)
                                 .map(|(place, access)| {
                                     (Element::Place(place), FieldAccessVariant::Field(access))
                                 })
-                    .map_err(Error::Place),
+                                .map_err(Error::Place),
                         }
                     }
                     _ => place
@@ -1245,11 +1245,11 @@ impl Element {
                                 FieldAccessVariant::Method(Self::Value(value)),
                             )),
                             _ => value
-                    .field_structure(identifier.name)
+                                .field_structure(identifier.name)
                                 .map(|(value, access)| {
                                     (Element::Value(value), FieldAccessVariant::Field(access))
                                 })
-                    .map_err(Error::Value),
+                                .map_err(Error::Value),
                         }
                     }
                     _ => value
