@@ -21,7 +21,7 @@ pub trait Engine: JubjubEngine + Debug {
 }
 
 lazy_static! {
-    static ref JUBJUB_BN256_PARAMS: AltJubjubBn256 = AltJubjubBn256::new_with_custom_generators(4 * 8 * 20); // ~ 20 Kb
+    static ref JUBJUB_BN256_PARAMS: AltJubjubBn256 = AltJubjubBn256::new();
 }
 
 impl Engine for Bn256 {

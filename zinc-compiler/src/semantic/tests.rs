@@ -62,4 +62,3 @@ fn another() -> u8 {
 
     assert_eq!(result, expected);
 }
-

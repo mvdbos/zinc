@@ -830,18 +830,18 @@ impl Analyzer {
 
         match access {
             FieldAccessVariant::Field(access) => match result {
-            Element::Place(mut place) => {
-                place.push_element(PlaceElement::Field { access });
+                Element::Place(mut place) => {
+                    place.push_element(PlaceElement::Field { access });
 
-                self.evaluation_stack
-                    .push(StackElement::Evaluated(Element::Place(place)));
+                    self.evaluation_stack
+                        .push(StackElement::Evaluated(Element::Place(place)));
 
-                Ok(None)
-            }
-            element => {
-                self.evaluation_stack.push(StackElement::Evaluated(element));
+                    Ok(None)
+                }
+                element => {
+                    self.evaluation_stack.push(StackElement::Evaluated(element));
 
-                Ok(Some(GeneratorExpressionOperator::slice(access)))
+                    Ok(Some(GeneratorExpressionOperator::slice(access)))
                 }
             },
             FieldAccessVariant::Method(instance) => {

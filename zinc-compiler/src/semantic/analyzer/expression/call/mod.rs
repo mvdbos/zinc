@@ -81,11 +81,11 @@ impl Analyzer {
                 match call_type {
                     CallType::BuiltIn => {}
                     _ => {
-                    return Err(Error::Element(
-                        location,
-                        ElementError::Type(TypeError::Function(FunctionTypeError::BuiltIn(
-                            BuiltInFunctionTypeError::specifier_missing(function.identifier()),
-                        ))),
+                        return Err(Error::Element(
+                            location,
+                            ElementError::Type(TypeError::Function(FunctionTypeError::BuiltIn(
+                                BuiltInFunctionTypeError::specifier_missing(function.identifier()),
+                            ))),
                         ))
                     }
                 }
