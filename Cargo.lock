@@ -789,7 +789,7 @@ checksum = "535622e6be132bccd223f4bb2b8ac8d53cda3c7a6394944d3b2b33fb974f9d76"
 
 [[package]]
 name = "schnorr"
-version = "0.1.5-ING-12"
+version = "0.1.5-ING-10"
 dependencies = [
  "colored",
  "env_logger",
@@ -1076,7 +1076,7 @@ checksum = "712e227841d057c1ee1cd2fb22fa7e5a5461ae8e48fa2ca79ec42cfc1931183f"
 
 [[package]]
 name = "zargo"
-version = "0.1.5-ING-12"
+version = "0.1.5-ING-10"
 dependencies = [
  "env_logger",
  "failure",
@@ -1090,7 +1090,7 @@ dependencies = [
 
 [[package]]
 name = "zinc-bytecode"
-version = "0.1.5-ING-12"
+version = "0.1.5-ING-10"
 dependencies = [
  "bincode",
  "colored",
@@ -1109,7 +1109,7 @@ dependencies = [
 
 [[package]]
 name = "zinc-compiler"
-version = "0.1.5-ING-12"
+version = "0.1.5-ING-10"
 dependencies = [
  "colored",
  "env_logger",
@@ -1126,7 +1126,7 @@ dependencies = [
 
 [[package]]
 name = "zinc-tester"
-version = "0.1.5-ING-12"
+version = "0.1.5-ING-10"
 dependencies = [
  "colored",
  "failure",
@@ -1143,7 +1143,7 @@ dependencies = [
 
 [[package]]
 name = "zinc-utils"
-version = "0.1.5-ING-12"
+version = "0.1.5-ING-10"
 dependencies = [
  "num-bigint",
  "num-traits 0.2.11",
@@ -1151,7 +1151,7 @@ dependencies = [
 
 [[package]]
 name = "zinc-vm"
-version = "0.1.5-ING-12"
+version = "0.1.5-ING-10"
 dependencies = [
  "bellman_ce",
  "clap",
