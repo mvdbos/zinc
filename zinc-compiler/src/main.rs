@@ -104,6 +104,14 @@ fn main() {
     })
 }
 
+// Implementation of intermodule dependencies for Zinc. 
+
+// IMPORTANT NOTE ABOUT THE UPDATE
+// In original Zinc, intermodule dependencies are not supported.
+// Dependencies can only used in tha main module of the project. 
+// With this update, we make dependency management more flexible
+// by enabling it for any module.  
+
 // Topologically sort the module path into L
 
 // L ← Empty list that will contain the sorted nodes
