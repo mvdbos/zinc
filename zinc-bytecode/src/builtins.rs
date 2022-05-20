@@ -17,5 +17,4 @@ pub enum BuiltinIdentifier {
     FieldInverse,
     CryptoBlake2s,
     CryptoBlake2sMultiInput,
-    CryptoPedersenMultiInput,
 }
