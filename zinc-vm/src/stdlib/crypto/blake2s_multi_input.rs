@@ -26,22 +26,19 @@ impl Blake2sMultiInput {
     }
 }
 
-// Implementation of Blake2s gadget for Zinc.
+// Implementation of Blake2s multi-input gadget for Zinc.
 // It uses blake2s implementation of the franklin_crypto library.
 
 // IMPORTANT NOTE ABOUT THE GADGET:
-// In its original format, the hash digest of the franklin_crypto library does
-// not match with the original blake2 specification and with the BouncyCastle library.
-// Both the original spec and the BouncyCastle requires a little-endian representation
-// of **bytes** within the hash computation. And the same is for the franklin_crypto.
-// However, on top of that, franklin_crypto also requires little-endian ordering of
-// **bits within each byte** due to the UInt32 object type used in the implementation.
-// UInt32 is a representation of 32 Boolean objects as an unsigned integer, where the
-// least significant bit is located in the first place.
+// In ZKFlow, we generally use Blake2s hash to compute hash of two concatenated messages
+// such as Hash(nonce || serialized_component). Thus, in circuit computations, to eliminate
+// additional concatenation operations we designed blake2s_multi_input gadget, which handles
+// concatenation under the hood. The gadget expects exactly two messages as input.  
 
-// To overcome the mismatch between the franklin_crypto and the original spec, we added
-// a function in our gadget, reverse_byte_bits(), which reverses the bit order within
-// every byte before and after hashing operation.
+// Similar to Blake2s gadget, the multi-input gadget also implements reverse_byte_bits()
+// to assure correct ordering of the bits within each byte. Please check Blake2s gadget
+// to learn more about this operation.
+
 impl<E: Engine> NativeFunction<E> for Blake2sMultiInput {
     fn execute<CS: ConstraintSystem<E>>(
         &self,

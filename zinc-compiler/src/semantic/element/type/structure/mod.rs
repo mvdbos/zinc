@@ -27,6 +27,13 @@ pub struct Structure {
     pub scope: Rc<RefCell<Scope>>,
 }
 
+// Implementation of intermodule dependencies for Zinc. 
+
+// IMPORTANT NOTE ABOUT THE UPDATE
+// Zinc version 0.1.5 does not allow to have the same method names within the scope of different
+// structs. With this update, we add support for the same method name in separate structs, which
+//  enables us to implement methods of similar nature for different structs. 
+
 impl Structure {
     pub fn new(
         identifier: String,
