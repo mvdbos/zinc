@@ -137,6 +137,17 @@ impl<E: Engine> DataStack<E> {
         }
     }
 
+    // Fixing scope for structs. 
+
+    // IMPORTANT NOTE ABOUT THE UPDATE
+    // This update fixes a memory bug in the zinc VMs data stack. We observed that the data 
+    // stack does not clean its assigned types when it returns from a scope such as a function
+    // call or a conditional statement. If a new data type needs to be assigned to the freed 
+    // index in the stack, compilation fails. 
+
+    // Our fix provides a workaround to the problem, which enables value assignment only if old 
+    // and new values are the same type and does nothing otherwise.
+
     /// Conditionally apply delta
     fn merge_single<CS: ConstraintSystem<E>>(
         &mut self,

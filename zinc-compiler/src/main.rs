@@ -104,6 +104,17 @@ fn main() {
     })
 }
 
+// Implementation of intermodule dependencies for Zinc. 
+
+// IMPORTANT NOTE ABOUT THE UPDATE
+// In original Zinc, intermodule dependencies are not supported.
+// Dependencies can only used in the main module of the project. 
+// With this update, we enable modules depending on other modules 
+// by topologically sorting source files based on their mod 
+// statements before starting compilation. This works, as long as 
+// there are no cyclic dependencies. If there are, compilation 
+// fails.
+
 // Topologically sort the module path into L
 
 // L ← Empty list that will contain the sorted nodes
