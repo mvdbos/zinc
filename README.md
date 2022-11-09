@@ -1,80 +1,25 @@
-# The Zinc framework
+A fork of Matter Labs' Zinc ZKP toolchain for the [ZKFlow protocol](https://github.com/mvdbos/zkflow).
 
-## Documentation
-
-The official Zinc book: https://zinc.matterlabs.dev
-
-## Gitter
-
-Please discuss here: https://gitter.im/matter-labs/zinc
+Please see the [CHANGELOG](CHANGELOG.md) for ZKFlow-specific changes.
 
 ## Installation
 
-1. Download the latest release for your machine from https://github.com/matter-labs/zinc/releases.
-2. Unpack its contents to some folder and add the folder to your `PATH` environment variable.
-3. Use the binaries via your favorite terminal.
-
-#### Quick setup
-
-Download the Shell script for your OS and run it with `bash <name>.sh` to install
-all the binaries and generate a local folder with examples ready for hacking.
-
-[linux.sh](./install/linux.sh)
-
-[macos.sh](./install/macos.sh)
-
-## Example
-
-At first, you should install the following binaries into your `PATH`:
-- `zargo` - the circuit management tool
-- `znc` - the Zinc compiler
-- `zvm` - the Zinc virtual machine
-- `schnorr` - the Schnorr signature tool (optional)
-
-Then, follow the example to create and use your first circuit:
+Please make sure you have a recent version of Rust installed before building Zinc.
 
 ```bash
-# create a new circuit called 'zircuit'
-zargo new --type circuit zircuit
-cd zircuit/
-
-# write some code in the circuit
-
-# build the circuit
-zargo build
-
-# fill the witness input JSON usually located at ./data/witness.json with values
-
-# runs the circuit to check it without input data
-zargo run
-
-# generate the prover parameters
-zargo setup
-
-# generate the proof
-zargo prove > './data/proof.txt'
-
-# verify the proof
-zargo verify < './data/proof.txt'
+$ git clone https://github.com/mvdbos/zinc
+$ cd zinc
+$ git checkout ing-fork
+$ cargo b --release
 ```
 
-**OR**
+Built binaries will be stored in `./target/release`. 
+Optionally, move the `zargo`, `znc` and `zvm` binaries to a directory you prefer and add it to your systems PATH. 
 
-```bash
-# create a new circuit called 'zircuit'
-zargo new --type circuit zircuit
-cd zircuit/
 
-# write some code in the circuit
-
-# build & run & setup & prove & verify
-zargo proof-check
-
-# fill the witness input JSON usually located at ./data/witness.json with values
-
-# repeat the sequence
-zargo proof-check
-```
+***
+# Original README
+For reference, excerpts from original README:
 
 ## Design background
 
