@@ -1,4 +1,4 @@
-A fork of Matter Labs' Zinc ZKP toolchain for the [ZKFlow protocol](https://github.com/mvdbos/zkflow).
+A fork of Matter Labs' Zinc ZKP toolchain for the [ZKFlow protocol](https://github.com/ing-bank/zkflow).
 
 Please see the [CHANGELOG](CHANGELOG.md) for ZKFlow-specific changes.
 
